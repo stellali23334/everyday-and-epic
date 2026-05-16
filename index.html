@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>everyday and epic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  /* ─── Base ─────────────────────────────────────────── */
+  :root {
+    --bg: #000;
+    --ink: #6B1C23;
+    --paper: #f0e6d8;
+    --whisper: rgba(240, 230, 216, 0.4);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    background: var(--bg);
+    color: var(--paper);
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  body { cursor: default; }
+  img { display: block; user-select: none; -webkit-user-drag: none; }
+
+  /* ─── Entry: title + two faces ─────────────────────── */
+  .entry {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3vh 2rem 3vh;
+    position: relative;
+    gap: 2vh;
+  }
+  .entry .title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--ink);
+    transform: scaleY(1.9);
+    transform-origin: center;
+    font-size: clamp(1.8rem, 6vw, 5rem);
+    line-height: 1;
+    letter-spacing: -0.01em;
+    margin-bottom: 4vh;
+    user-select: none;
+  }
+  .entry .title span { display: inline; }
+  .entry .title .and {
+    font-size: 0.85em;
+    opacity: 0.85;
+    margin: 0 0.2em;
+  }
+
+  .faces {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3vw;
+    width: min(75vw, 780px);
+  }
+
+  .face-half {
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .face-half:hover { transform: translateY(-6px); }
+
+  .face-img-wrap {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    background: transparent;
+  }
+  .face-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center center;
+    transition: filter 0.7s ease, transform 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+    filter: brightness(0.95) contrast(1.02);
+  }
+  .face-half:hover .face-img-wrap img {
+    filter: brightness(1.05) contrast(1.05);
+    transform: scale(1.025);
+  }
+
+  .choice-hint {
+    color: var(--whisper);
+    font-style: italic;
+    font-size: clamp(0.85rem, 1.4vw, 1.05rem);
+    letter-spacing: 0.25em;
+    text-align: center;
+    pointer-events: none;
+    animation: pulse 3.5s ease-in-out infinite;
+    margin-top: 2vh;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+
+  @media (max-width: 720px) {
+    .faces { gap: 2vw; width: 90vw; }
+    .entry .title { transform: scaleY(1.6); font-size: clamp(1.4rem, 5vw, 2.5rem); }
+  }
+
+  /* ─── Main Story Screens ────────────────────────────── */
+  .story { display: none; }
+  .story.active { display: block; }
+
+  .screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    position: relative;
+  }
+  .screen.tight { padding: 2rem; }
+
+  .single img {
+    max-width: min(85vw, 1100px);
+    max-height: 88vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+
+  /* Double image side by side */
+  .double {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2vw;
+    width: min(95vw, 1500px);
+  }
+  .double img {
+    width: 100%;
+    max-height: 80vh;
+    object-fit: contain;
+  }
+
+  /* Grid of 6 — noisy mosaic */
+  .grid-6 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 8px;
+    width: min(96vw, 1500px);
+    height: 88vh;
+  }
+  .grid-6 img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Crossfade three palm-light images */
+  .crossfade-3 {
+    position: relative;
+    width: min(85vw, 1100px);
+    aspect-ratio: 3 / 2;
+  }
+  .crossfade-3 img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    animation: crossfade 9s infinite;
+  }
+  .crossfade-3 img:nth-child(1) { animation-delay: 0s; }
+  .crossfade-3 img:nth-child(2) { animation-delay: 3s; }
+  .crossfade-3 img:nth-child(3) { animation-delay: 6s; }
+  @keyframes crossfade {
+    0%   { opacity: 0; }
+    8%   { opacity: 1; }
+    33%  { opacity: 1; }
+    41%  { opacity: 0; }
+    100% { opacity: 0; }
+  }
+
+  /* ─── Third Act — the line + final face ──────────── */
+  .final-line {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    text-align: center;
+  }
+  .final-line p {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 300;
+    color: var(--paper);
+    font-size: clamp(1.3rem, 2.6vw, 2rem);
+    line-height: 1.9;
+    max-width: 720px;
+    letter-spacing: 0.02em;
+  }
+  .final-line p + p { margin-top: 1.2rem; }
+  .final-line .signature {
+    margin-top: 4rem;
+    color: var(--ink);
+    font-style: italic;
+    font-size: clamp(1.5rem, 3vw, 2.4rem);
+  }
+
+  .final-face {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+  }
+  .final-face .placeholder {
+    width: min(60vw, 380px);
+    aspect-ratio: 3 / 4;
+    background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%);
+    border: 1px solid rgba(240, 230, 216, 0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: rgba(240, 230, 216, 0.25);
+    font-style: italic;
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+    padding: 2rem;
+    text-align: center;
+    line-height: 1.8;
+  }
+
+  /* ─── Scroll-triggered reveal ─────────────────────── */
+  .screen { opacity: 0; transition: opacity 0.9s ease-out; }
+  .screen.in-view { opacity: 1; }
+
+  /* ─── Return-to-start link at end ─────────────────── */
+  .restart {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+  .restart button {
+    background: none;
+    border: 1px solid var(--ink);
+    color: var(--ink);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(1rem, 1.6vw, 1.3rem);
+    letter-spacing: 0.2em;
+    padding: 1.2rem 3rem;
+    cursor: pointer;
+    transition: all 0.4s ease;
+  }
+  .restart button:hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  /* ─── Responsive — collapse doubles & grid on mobile ── */
+  @media (max-width: 720px) {
+    .double { grid-template-columns: 1fr; gap: 1rem; }
+    .double img { max-height: 45vh; }
+    .grid-6 { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(3, 1fr); height: 90vh; }
+    .choice { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
+    .title { transform: scaleY(1.8); }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!--  ACT I — Opening: title + two faces as the choice            -->
+<!-- ════════════════════════════════════════════════════════════ -->
+
+<section class="entry">
+  <h1 class="title">
+    <span>everyday</span>
+    <span class="and"><em>and</em></span>
+    <span>epic</span>
+  </h1>
+
+  <div class="faces">
+    <div class="face-half" onclick="choose('inward-out')">
+      <div class="face-img-wrap">
+        <img src="photos/face_grown.jpg" alt="">
+      </div>
+    </div>
+    <div class="face-half" onclick="choose('outward-in')">
+      <div class="face-img-wrap">
+        <img src="photos/face_child.jpg" alt="">
+      </div>
+    </div>
+  </div>
+
+  <div class="choice-hint"><em>choose a face</em></div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!--  ACT II — Main sequence                                       -->
+<!--  inward-out: plays screens 01 → 26                            -->
+<!--  outward-in: plays screens 26 → 01 (reversed)                 -->
+<!-- ════════════════════════════════════════════════════════════ -->
+
+<main class="story" id="story">
+
+  <!-- 01 — orchid -->
+  <section class="screen single" data-i="1">
+    <img src="photos/orchid_window.jpg" alt="">
+  </section>
+
+  <!-- 02 — tulips -->
+  <section class="screen single" data-i="2">
+    <img src="photos/tulips_red.jpg" alt="">
+  </section>
+
+  <!-- 03 — noisy grid: 6 high-ISO intimate nights -->
+  <section class="screen tight" data-i="3">
+    <div class="grid-6">
+      <img src="photos/margiela_book.jpg" alt="">
+      <img src="photos/useless_magazine.jpg" alt="">
+      <img src="photos/useless_1953.jpg" alt="">
+      <img src="photos/pills_tea.jpg" alt="">
+      <img src="photos/red_shelf.jpg" alt="">
+      <img src="photos/magazine_blur.jpg" alt="">
+    </div>
+  </section>
+
+  <!-- 03b — single: westfield phone, the lingering aftermath -->
+  <section class="screen single" data-i="3.5">
+    <img src="photos/westfield_phone.jpg" alt="">
+  </section>
+
+  <!-- 03c — single: phone + popeye on the carpet -->
+  <section class="screen single" data-i="3.7">
+    <img src="photos/phone_popeye.jpg" alt="">
+  </section>
+
+  <!-- 04 — vitamins / morning aftermath -->
+  <section class="screen single" data-i="4">
+    <img src="photos/vitamins.jpg" alt="">
+  </section>
+
+  <!-- 05 — dog + ball, double -->
+  <section class="screen" data-i="5">
+    <div class="double">
+      <img src="photos/dog_blurry.jpg" alt="">
+      <img src="photos/tennis_ball.jpg" alt="">
+    </div>
+  </section>
+
+  <!-- 06 — abstract: metal spring -->
+  <section class="screen single" data-i="6">
+    <img src="photos/metal_spring.jpg" alt="">
+  </section>
+
+  <!-- ─── 中内 ─── -->
+
+  <!-- 07 — water bottle + eggs, double -->
+  <section class="screen" data-i="7">
+    <div class="double">
+      <img src="photos/water_bottle.jpg" alt="">
+      <img src="photos/eggs.jpg" alt="">
+    </div>
+  </section>
+
+  <!-- 08 — wooden drawer -->
+  <section class="screen single" data-i="8">
+    <img src="photos/wooden_drawer.jpg" alt="">
+  </section>
+
+  <!-- 09 — celine + chloé, double -->
+  <section class="screen" data-i="9">
+    <div class="double">
+      <img src="photos/celine_logo.jpg" alt="">
+      <img src="photos/chloe_yellow.jpg" alt="">
+    </div>
+  </section>
+
+  <!-- 10 — chanel bag close-up -->
+  <section class="screen single" data-i="10">
+    <img src="photos/chanel_bag.jpg" alt="">
+  </section>
+
+  <!-- 11 — margiela jacket -->
+  <section class="screen single" data-i="11">
+    <img src="photos/margiela_jacket.jpg" alt="">
+  </section>
+
+  <!-- 12 — velvet shoes + esber thongs, double (echoes the slipper choice) -->
+  <section class="screen" data-i="12">
+    <div class="double">
+      <img src="photos/velvet_shoes.jpg" alt="">
+      <img src="photos/esber_thongs.jpg" alt="">
+    </div>
+  </section>
+
+  <!-- ─── 中外 ─── -->
+
+  <!-- 13 — car phone -->
+  <section class="screen single" data-i="13">
+    <img src="photos/car_phone.jpg" alt="">
+  </section>
+
+  <!-- 14 — cigarettes -->
+  <section class="screen single" data-i="14">
+    <img src="photos/cigarettes.jpg" alt="">
+  </section>
+
+  <!-- 15 — restaurant bar -->
+  <section class="screen single" data-i="15">
+    <img src="photos/restaurant_bar.jpg" alt="">
+  </section>
+
+  <!-- 16 — market shoes — the pivot -->
+  <section class="screen single" data-i="16">
+    <img src="photos/market_shoes.jpg" alt="">
+  </section>
+
+  <!-- 17 — pink cowboy hat -->
+  <section class="screen single" data-i="17">
+    <img src="photos/pink_cowboy_hat.jpg" alt="">
+  </section>
+
+  <!-- ─── 外 ─── -->
+
+  <!-- 18 — noisy grid: market density (6 photos) -->
+  <section class="screen tight" data-i="18">
+    <div class="grid-6">
+      <img src="photos/chives_market.jpg" alt="">
+      <img src="photos/butcher_meat.jpg" alt="">
+      <img src="photos/lamb_shop_back.jpg" alt="">
+      <img src="photos/lamb_shop_talk.jpg" alt="">
+      <img src="photos/lamb_trays.jpg" alt="">
+      <img src="photos/noodle_workshop.jpg" alt="">
+    </div>
+  </section>
+
+  <!-- 19 — fish + pearl arm, double -->
+  <section class="screen" data-i="19">
+    <div class="double">
+      <img src="photos/fish_market.jpg" alt="">
+      <img src="photos/pearl_arm.jpg" alt="">
+    </div>
+  </section>
+
+  <!-- 20 — noisy grid: fashion show backstage (6 photos) -->
+  <section class="screen tight" data-i="20">
+    <div class="grid-6">
+      <img src="photos/makeup_room.jpg" alt="">
+      <img src="photos/steamer_feet.jpg" alt="">
+      <img src="photos/garment_rack.jpg" alt="">
+      <img src="photos/church_clock.jpg" alt="">
+      <img src="photos/orange_heels_lana.jpg" alt="">
+      <img src="photos/church_desk.jpg" alt="">
+    </div>
+  </section>
+
+  <!-- 21 — surveillance + tube, double -->
+  <section class="screen" data-i="21">
+    <div class="double">
+      <img src="photos/surveillance.jpg" alt="">
+      <img src="photos/tube_empty.jpg" alt="">
+    </div>
+  </section>
+
+  <!-- 22 — church office (book stack with cross) -->
+  <section class="screen single" data-i="22">
+    <img src="photos/church_office.jpg" alt="">
+  </section>
+
+  <!-- ─── 最外的尽头 · 边界消失 ─── -->
+
+  <!-- 23 — church tablet (the stranger's life) -->
+  <section class="screen single" data-i="23">
+    <img src="photos/church_tablet.jpg" alt="">
+  </section>
+
+  <!-- 24 — cow + reflection — THE core image -->
+  <section class="screen single" data-i="24">
+    <img src="photos/cow_reflection.jpg" alt="">
+  </section>
+
+  <!-- 25 — noisy grid: 6 mojitos (gradient: light → dark) -->
+  <section class="screen tight" data-i="25">
+    <div class="grid-6">
+      <img src="photos/mojito_light.jpg" alt="">
+      <img src="photos/mojito_mid.jpg" alt="">
+      <img src="photos/mojito_dark.jpg" alt="">
+      <img src="photos/mojito_mid.jpg" alt="">
+      <img src="photos/mojito_light.jpg" alt="">
+      <img src="photos/mojito_dark.jpg" alt="">
+    </div>
+    <!-- ⚠ only 3 mojito source photos exist; 6 cells are tiled with reordering. Replace with 6 unique frames when available. -->
+  </section>
+
+  <!-- 26 — palm light crossfade (you wanted this LAST) -->
+  <section class="screen tight" data-i="26">
+    <div class="crossfade-3">
+      <!-- ⚠ placeholders — replace with three palm-light photos (green → orange → red) -->
+      <img src="photos/subway_seat.jpg" alt="" style="filter: hue-rotate(90deg) saturate(0.6) brightness(0.5);">
+      <img src="photos/subway_seat.jpg" alt="" style="filter: hue-rotate(20deg) saturate(0.8) brightness(0.7);">
+      <img src="photos/subway_seat.jpg" alt="" style="filter: hue-rotate(-20deg) saturate(1.1) brightness(0.55);">
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════ -->
+  <!--  ACT III — the line + final face                              -->
+  <!-- ════════════════════════════════════════════════════════════ -->
+
+  <section class="screen final-line" data-i="27">
+    <p><em>by ten thousand small choices,</em></p>
+    <p><em>going in or going out,</em></p>
+    <p><em>I am becoming myself.</em></p>
+    <div class="signature">殊途同归</div>
+  </section>
+
+  <section class="screen final-face" data-i="28">
+    <div class="placeholder">
+      original ID photo<br>
+      <span style="opacity:0.6">(unobscured, sharp)</span>
+    </div>
+  </section>
+
+  <section class="restart">
+    <button onclick="restart()">
+      <em>walk the other way</em>
+    </button>
+  </section>
+
+</main>
+
+<script>
+  // ─── Choice handling ───────────────────────────────────────
+  function choose(direction) {
+    const story = document.getElementById('story');
+    const screens = Array.from(story.querySelectorAll('.screen'));
+    const restartBtn = story.querySelector('.restart');
+    // The last two screens (final-line + final-face) belong to Act III;
+    // everything before them is the reversible main sequence.
+    const finalCount = 2;
+    const main = screens.slice(0, screens.length - finalCount);
+    const finalScreens = screens.slice(screens.length - finalCount);
+
+    if (direction === 'outward-in') {
+      // Reverse only the main sequence; keep the third act in place
+      main.slice().reverse().forEach(s => story.appendChild(s));
+      finalScreens.forEach(s => story.appendChild(s));
+    }
+    // For 'inward-out' we leave the natural DOM order untouched
+
+    // Make sure restart button always sits at the very end
+    if (restartBtn) story.appendChild(restartBtn);
+
+    story.classList.add('active');
+    // hide entry (title + face choice)
+    document.querySelectorAll('.entry').forEach(el => el.style.display = 'none');
+
+    // smooth scroll to top of story
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+
+  // ─── Restart ───────────────────────────────────────────────
+  function restart() {
+    location.reload();
+  }
+
+  // ─── Scroll-triggered reveal ──────────────────────────────
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) e.target.classList.add('in-view');
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.screen').forEach(s => io.observe(s));
+</script>
+
+</body>
+</html>
