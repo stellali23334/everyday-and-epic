@@ -27,76 +27,117 @@ body {
 .screen.visible { opacity: 1; }
 .screen img { position: absolute; object-fit: cover; height: auto; }
 
-#opening-photo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-#opening-photo img {
-  position: relative;
-  max-height: 85vh;
-  max-width: 85vw;
-  object-fit: contain;
-  opacity: 0;
-  animation: fadeOpen 3s ease 0.5s forwards;
-}
-@keyframes fadeOpen {
-  from { opacity: 0; transform: scale(1.02); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-#title-screen {
+/* ============ CHOICE SCREEN (also opening) ============ */
+#choice-screen {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  opacity: 1;
+  gap: clamp(1.5rem, 3vh, 3rem);
+  padding: 4rem 2rem;
 }
-.title-main {
-  font-weight: 300;
-  font-size: clamp(1.6rem, 4.5vw, 3.5rem);
-  letter-spacing: 0.35em;
-  color: #6B1C23;
-  text-transform: uppercase;
-  transform: scaleX(1.6);
-  opacity: 0;
-  transition: opacity 1.8s ease;
-}
-.title-main.visible { opacity: 1; }
 
-#choice-screen {
+.choice-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-style: italic;
+  font-size: clamp(1.5rem, 3.5vw, 2.8rem);
+  letter-spacing: 0.2em;
+  color: #6B1C23;
+  text-transform: lowercase;
+  opacity: 0;
+  animation: titleIn 2s ease 0.3s forwards;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.choice-subtitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-style: italic;
+  font-size: clamp(0.85rem, 1.4vw, 1.15rem);
+  letter-spacing: 0.6em;
+  color: #aaa;
+  text-transform: lowercase;
+  opacity: 0;
+  animation: subIn 2s ease 2.2s forwards;
+  margin-top: clamp(1.5rem, 3vh, 2.5rem);
+}
+
+@keyframes titleIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes subIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.choice-row {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: clamp(1.5rem, 4vw, 5rem);
+  margin-top: clamp(1rem, 3vh, 3rem);
 }
+
 .choice-btn {
   cursor: pointer;
   border: none;
   background: none;
   padding: 0;
+  opacity: 0;
+  animation: faceIn 2s ease 1.5s forwards;
+}
+@keyframes faceIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 .choice-btn img {
   position: relative;
-  height: clamp(200px, 40vh, 400px);
+  height: clamp(220px, 50vh, 460px);
   width: auto;
   object-fit: contain;
-  filter: brightness(0.6);
-  transition: filter 0.5s, transform 0.5s;
+  filter: brightness(1);
+  transition: filter 0.6s, transform 0.6s, opacity 0.6s;
 }
 .choice-btn:hover img {
-  filter: brightness(1);
+  filter: brightness(1.1);
   transform: scale(1.03);
+}
+.choice-row:hover .choice-btn:not(:hover) img {
+  filter: brightness(0.5);
 }
 .choice-divider {
   width: 1px;
-  height: clamp(80px, 20vh, 200px);
+  height: clamp(100px, 25vh, 240px);
   background: #222;
+  opacity: 0;
+  animation: faceIn 2s ease 1.5s forwards;
 }
 
+/* ============ PATH CONTAINERS ============ */
 .path-container { display: none; }
 .path-container.active { display: block; }
 #shared-ending { display: none; }
 #shared-ending.active { display: block; }
+
+/* ============ ENDING ============ */
+#ending-fingerprint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#ending-fingerprint img {
+  position: relative;
+  max-width: 60vw;
+  max-height: 80vh;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity 2.5s ease;
+}
+#ending-fingerprint img.visible { opacity: 1; }
 
 #ending-text {
   display: flex;
@@ -110,7 +151,7 @@ body {
   font-weight: 300;
   line-height: 2.4;
   letter-spacing: 0.06em;
-  max-width: 550px;
+  max-width: 600px;
   opacity: 0;
   transition: opacity 2.5s ease;
 }
@@ -131,6 +172,56 @@ body {
 }
 #ending-photo img.visible { opacity: 1; }
 
+/* ============ FINAL "WALK ANOTHER WAY" SCREEN ============ */
+#walk-back {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: clamp(1.5rem, 4vh, 3rem);
+  padding: 3rem;
+}
+.walk-link {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-style: italic;
+  font-size: clamp(1.4rem, 3.5vw, 2.6rem);
+  letter-spacing: 0.15em;
+  color: #e8e4df;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  opacity: 0;
+  transition: opacity 2.5s ease, color 0.6s, letter-spacing 0.6s;
+  text-transform: lowercase;
+}
+.walk-link.visible { opacity: 1; }
+.walk-link:hover {
+  color: #6B1C23;
+  letter-spacing: 0.25em;
+}
+.walk-sub-en {
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(0.85rem, 1.5vw, 1.15rem);
+  letter-spacing: 0.18em;
+  color: #888;
+  opacity: 0;
+  transition: opacity 2.5s ease 0.4s;
+}
+.walk-sub-en.visible { opacity: 1; }
+.walk-sub-zh {
+  font-weight: 300;
+  font-size: clamp(0.75rem, 1.2vw, 0.95rem);
+  letter-spacing: 0.4em;
+  color: #555;
+  opacity: 0;
+  transition: opacity 2.5s ease 0.8s;
+}
+.walk-sub-zh.visible { opacity: 1; }
+
 .scroll-hint {
   position: fixed;
   bottom: 1.5rem;
@@ -149,23 +240,19 @@ body {
 
 <div class="scroll-hint" id="sh">SCROLL</div>
 
-<!-- ==================== OPENING ==================== -->
-<section class="screen" id="opening-photo">
-  <img src="images/img20260417_17374138_2.JPG" alt="">
-</section>
-
-<section class="screen" id="title-screen">
-  <div class="title-main" id="titleMain">everyday and epic</div>
-</section>
-
-<section class="screen" id="choice-screen">
-  <button class="choice-btn" onclick="choosePath('A')">
-    <img src="images/img20260417_17374138_2.JPG" alt="">
-  </button>
-  <div class="choice-divider"></div>
-  <button class="choice-btn" onclick="choosePath('B')">
-    <img src="images/img20260417_17393206_2.JPG" alt="">
-  </button>
+<!-- ==================== OPENING + CHOICE (merged) ==================== -->
+<section class="screen visible" id="choice-screen">
+  <div class="choice-title">everyday and epic</div>
+  <div class="choice-row">
+    <button class="choice-btn" onclick="choosePath('A')">
+      <img src="images/img20260417_17374138 2.JPG" alt="">
+    </button>
+    <div class="choice-divider"></div>
+    <button class="choice-btn" onclick="choosePath('B')">
+      <img src="images/img20260417_17393206 2.JPG" alt="">
+    </button>
+  </div>
+  <div class="choice-subtitle">choose a face</div>
 </section>
 
 <!-- ==================== PATH A (18 screens) ==================== -->
@@ -305,14 +392,19 @@ body {
 
 <!-- ==================== SHARED ENDING ==================== -->
 <div id="shared-ending">
-  <section class="screen" style="display:flex;align-items:center;justify-content:center">
-    <img src="images/1747986797000_R0001795.JPG" style="position:relative;max-width:60vw;max-height:80vh;object-fit:contain;opacity:0;transition:opacity 2s ease" alt="">
+  <section class="screen" id="ending-fingerprint">
+    <img src="images/1747986797000_R0001795.JPG" alt="">
   </section>
   <section class="screen" id="ending-text">
     <p>你的每一个选择都把你带到了不同的地方<br><br>但无论你怎么选择<br><br>你都在成为你自己的路上</p>
   </section>
   <section class="screen" id="ending-photo">
     <img src="images/IMG_5512.PNG" alt="">
+  </section>
+  <section class="screen" id="walk-back">
+    <button class="walk-link" onclick="walkAnotherWay()">walk another way</button>
+    <div class="walk-sub-en">Every road leads me</div>
+    <div class="walk-sub-zh">每 条 路 都 走 向 我 自 己</div>
   </section>
 </div>
 
@@ -326,9 +418,33 @@ function choosePath(path) {
     document.getElementById(path === 'A' ? 'pathA' : 'pathB').classList.add('active');
     document.getElementById('shared-ending').classList.add('active');
     observeAll();
-    const target = document.querySelector((path === 'A' ? '#pathA' : '#pathB') + ' .screen');
-    if (target) setTimeout(() => target.scrollIntoView({ behavior: 'smooth' }), 200);
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    setTimeout(() => {
+      const target = document.querySelector((path === 'A' ? '#pathA' : '#pathB') + ' .screen');
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    }, 200);
   }, 1000);
+}
+
+function walkAnotherWay() {
+  // Fade out current screens, reset to choice
+  document.body.style.transition = 'opacity 0.8s ease';
+  document.body.style.opacity = '0';
+  setTimeout(() => {
+    document.getElementById('pathA').classList.remove('active');
+    document.getElementById('pathB').classList.remove('active');
+    document.getElementById('shared-ending').classList.remove('active');
+    const choice = document.getElementById('choice-screen');
+    choice.style.display = 'flex';
+    choice.style.opacity = '1';
+    // reset visited classes
+    document.querySelectorAll('.screen.visible').forEach(s => {
+      if (s.id !== 'choice-screen') s.classList.remove('visible');
+    });
+    document.querySelectorAll('.walk-link, .walk-sub-en, .walk-sub-zh, #ending-text p, #ending-photo img, #ending-fingerprint img').forEach(el => el.classList.remove('visible'));
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    document.body.style.opacity = '1';
+  }, 800);
 }
 
 function observeAll() {
@@ -336,9 +452,7 @@ function observeAll() {
     entries.forEach(e => {
       if (e.isIntersecting) {
         e.target.classList.add('visible');
-        e.target.querySelectorAll('.title-main, #ending-text p, #ending-photo img').forEach(el => el.classList.add('visible'));
-        const fp = e.target.querySelector('img[src*="R0001795"]');
-        if (fp) fp.style.opacity = '1';
+        e.target.querySelectorAll('#ending-text p, #ending-photo img, #ending-fingerprint img, .walk-link, .walk-sub-en, .walk-sub-zh').forEach(el => el.classList.add('visible'));
       }
     });
   }, { threshold: 0.15 });
