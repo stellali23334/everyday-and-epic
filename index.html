@@ -1,502 +1,356 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>everyday and epic</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0a0a0a;
-    --text: #e8e4df;
-    --ink: #6B1C23;
-  }
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap');
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-  html {
-    scroll-behavior: smooth;
-    scroll-snap-type: y mandatory;
-  }
+body {
+  background: #0a0a0a;
+  color: #e8e4df;
+  font-family: 'Cormorant Garamond', serif;
+  overflow-x: hidden;
+}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 300;
-    overflow-x: hidden;
-    -webkit-font-smoothing: antialiased;
-  }
+.screen {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+.screen.visible { opacity: 1; }
+.screen img { position: absolute; object-fit: cover; height: auto; }
 
-  img {
-    display: block;
-    user-select: none;
-    -webkit-user-drag: none;
-  }
+#opening-photo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#opening-photo img {
+  position: relative;
+  max-height: 85vh;
+  max-width: 85vw;
+  object-fit: contain;
+  opacity: 0;
+  animation: fadeOpen 3s ease 0.5s forwards;
+}
+@keyframes fadeOpen {
+  from { opacity: 0; transform: scale(1.02); }
+  to { opacity: 1; transform: scale(1); }
+}
 
-  /* ─── Full-screen sections ─────────────────────────── */
-  .screen {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-    min-height: 100vh;
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
-    overflow: hidden;
-    background: var(--bg);
-  }
+#title-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.title-main {
+  font-weight: 300;
+  font-size: clamp(1.6rem, 4.5vw, 3.5rem);
+  letter-spacing: 0.35em;
+  color: #6B1C23;
+  text-transform: uppercase;
+  transform: scaleX(1.6);
+  opacity: 0;
+  transition: opacity 1.8s ease;
+}
+.title-main.visible { opacity: 1; }
 
-  .screen.reveal {
-    opacity: 0;
-    transition: opacity 1.2s ease;
-  }
+#choice-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1.5rem, 4vw, 5rem);
+}
+.choice-btn {
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 0;
+}
+.choice-btn img {
+  position: relative;
+  height: clamp(200px, 40vh, 400px);
+  width: auto;
+  object-fit: contain;
+  filter: brightness(0.6);
+  transition: filter 0.5s, transform 0.5s;
+}
+.choice-btn:hover img {
+  filter: brightness(1);
+  transform: scale(1.03);
+}
+.choice-divider {
+  width: 1px;
+  height: clamp(80px, 20vh, 200px);
+  background: #222;
+}
 
-  .screen.reveal.in-view {
-    opacity: 1;
-  }
+.path-container { display: none; }
+.path-container.active { display: block; }
+#shared-ending { display: none; }
+#shared-ending.active { display: block; }
 
-  /* ─── Act I · Screen 1 — opening photo ─────────────── */
-  .screen-opening-photo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+#ending-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3rem;
+}
+#ending-text p {
+  font-size: clamp(0.95rem, 2.2vw, 1.5rem);
+  font-weight: 300;
+  line-height: 2.4;
+  letter-spacing: 0.06em;
+  max-width: 550px;
+  opacity: 0;
+  transition: opacity 2.5s ease;
+}
+#ending-text p.visible { opacity: 1; }
 
-  .screen-opening-photo img {
-    max-height: 85vh;
-    width: auto;
-    max-width: 92vw;
-    object-fit: contain;
-    opacity: 0;
-    transform: scale(1.02);
-    animation: openingFade 3s ease forwards;
-  }
+#ending-photo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#ending-photo img {
+  position: relative;
+  max-height: 65vh;
+  max-width: 55vw;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity 2.5s ease;
+}
+#ending-photo img.visible { opacity: 1; }
 
-  @keyframes openingFade {
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-
-  /* ─── Act I · Screen 2 — title ─────────────────────── */
-  .screen-title {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .screen-title h1 {
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 300;
-    font-size: clamp(1.4rem, 4.5vw, 3.2rem);
-    letter-spacing: 0.35em;
-    color: var(--ink);
-    transform: scaleX(1.6);
-    transform-origin: center;
-    text-indent: 0.35em;
-    opacity: 0;
-    animation: titleFade 1.8s ease 0.15s forwards;
-  }
-
-  @keyframes titleFade {
-    to { opacity: 1; }
-  }
-
-  /* ─── Act I · Screen 3 — choice ──────────────────── */
-  .screen-choice {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: opacity 1s ease;
-  }
-
-  .screen-choice.is-done {
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  .choice-stage {
-    position: relative;
-    width: min(88vw, 1100px);
-    height: min(72vh, 780px);
-  }
-
-  .choice-stage img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .choice-half {
-    position: absolute;
-    top: 0;
-    width: 50%;
-    height: 100%;
-    overflow: hidden;
-    cursor: pointer;
-    border: none;
-    padding: 0;
-    background: transparent;
-  }
-
-  .choice-half--left { left: 0; }
-  .choice-half--right { right: 0; }
-
-  .choice-half img {
-    position: absolute;
-    top: 0;
-    width: 200%;
-    height: 100%;
-    object-fit: cover;
-    filter: brightness(0.6);
-    transition: filter 0.45s ease, transform 0.45s ease;
-    pointer-events: none;
-  }
-
-  .choice-half--left img { left: 0; }
-  .choice-half--right img { left: -100%; }
-
-  .choice-half:hover img {
-    filter: brightness(1);
-    transform: scale(1.03);
-  }
-
-  .choice-divider {
-    position: absolute;
-    left: 50%;
-    top: 0;
-    width: 1px;
-    height: 100%;
-    background: #222;
-    transform: translateX(-50%);
-    pointer-events: none;
-  }
-
-  /* ─── Path routes (hidden until choice) ───────────── */
-  .path-route {
-    display: none;
-  }
-
-  .path-route.is-active {
-    display: block;
-  }
-
-  /* ─── Path A · positioned photos ─────────────────── */
-  .path-screen {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-    min-height: 100vh;
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
-    overflow: hidden;
-    background: var(--bg);
-    opacity: 0;
-    transition: opacity 1.2s ease;
-  }
-
-  .path-screen.in-view {
-    opacity: 1;
-  }
-
-  .path-screen img {
-    position: absolute;
-    height: auto;
-    object-fit: cover;
-  }
-
-  /* ─── Path B placeholder ─────────────────────────── */
-  .screen-path-b {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .screen-path-b p {
-    font-size: clamp(1.2rem, 3vw, 2rem);
-    letter-spacing: 0.2em;
-    color: var(--text);
-    font-style: italic;
-  }
-
-  /* ─── Act III ──────────────────────────────────────── */
-  .screen-ending-photo,
-  .screen-ending-text,
-  .screen-id-photo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-  }
-
-  .screen-ending-photo img {
-    max-width: 60vw;
-    width: auto;
-    height: auto;
-    max-height: 80vh;
-    object-fit: contain;
-  }
-
-  .screen-ending-text .epilogue {
-    text-align: center;
-    font-weight: 300;
-    font-size: clamp(0.95rem, 2.2vw, 1.5rem);
-    line-height: 2.4;
-    letter-spacing: 0.08em;
-    max-width: 28em;
-    padding: 0 1.5rem;
-    opacity: 0;
-  }
-
-  .screen-ending-text .epilogue p + p {
-    margin-top: 1.2em;
-  }
-
-  .screen-ending-text.in-view .epilogue {
-    animation: epilogueFade 2.5s ease forwards;
-  }
-
-  @keyframes epilogueFade {
-    to { opacity: 1; }
-  }
-
-  .screen-id-photo img {
-    max-height: 65vh;
-    width: auto;
-    max-width: 90vw;
-    object-fit: contain;
-    opacity: 0;
-  }
-
-  .screen-id-photo.in-view img {
-    animation: idFade 2.5s ease forwards;
-  }
-
-  @keyframes idFade {
-    to { opacity: 1; }
-  }
+.scroll-hint {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.6rem;
+  letter-spacing: 0.5em;
+  color: #333;
+  z-index: 99;
+  transition: opacity 1s;
+}
+.scroll-hint.gone { opacity: 0; pointer-events: none; }
 </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════════════════ -->
-<!--  ACT I — Opening                                         -->
-<!-- ═══════════════════════════════════════════════════════ -->
+<div class="scroll-hint" id="sh">SCROLL</div>
 
-<section class="screen screen-opening-photo" data-act="opening">
-  <img src="images/opening.jpg" alt="">
+<!-- ==================== OPENING ==================== -->
+<section class="screen" id="opening-photo">
+  <img src="images/img20260417_17374138_2.JPG" alt="">
 </section>
 
-<section class="screen screen-title" data-act="opening">
-  <h1>EVERYDAY AND EPIC</h1>
+<section class="screen" id="title-screen">
+  <div class="title-main" id="titleMain">everyday and epic</div>
 </section>
 
-<section class="screen screen-choice reveal" id="screen-choice" data-act="opening">
-  <div class="choice-stage">
-    <div class="choice-half choice-half--left" id="choose-a" role="button" tabindex="0" aria-label="Path A">
-      <img src="images/choice.jpg" alt="">
-    </div>
-    <div class="choice-half choice-half--right" id="choose-b" role="button" tabindex="0" aria-label="Path B">
-      <img src="images/choice.jpg" alt="">
-    </div>
-    <div class="choice-divider" aria-hidden="true"></div>
-  </div>
+<section class="screen" id="choice-screen">
+  <button class="choice-btn" onclick="choosePath('A')">
+    <img src="images/img20260417_17374138_2.JPG" alt="">
+  </button>
+  <div class="choice-divider"></div>
+  <button class="choice-btn" onclick="choosePath('B')">
+    <img src="images/img20260417_17393206_2.JPG" alt="">
+  </button>
 </section>
 
-<!-- ═══════════════════════════════════════════════════════ -->
-<!--  ACT II — Path A (外 → 内)                               -->
-<!-- ═══════════════════════════════════════════════════════ -->
-
-<div id="path-a" class="path-route" aria-label="Path A">
-
-  <section class="path-screen" data-path-a="1">
-    <img src="images/R0050732.JPG" alt="" style="left:11.72%;top:28.43%;width:38.23%">
-    <img src="images/R0050736.JPG" alt="" style="left:49.95%;top:28.43%;width:38.23%">
+<!-- ==================== PATH A (18 screens) ==================== -->
+<div class="path-container" id="pathA">
+  <section class="screen">
+    <img src="images/R0050732.JPG" style="left:11.72%;top:28.43%;width:38.23%">
+    <img src="images/R0050736.JPG" style="left:49.95%;top:28.43%;width:38.23%">
   </section>
-
-  <section class="path-screen" data-path-a="2">
-    <img src="images/1747981098000_R0001774.JPG" alt="" style="left:23.39%;top:14.54%;width:26.61%">
-    <img src="images/R0050733.JPG" alt="" style="left:49.90%;top:14.72%;width:26.30%">
+  <section class="screen">
+    <img src="images/1747981098000_R0001774.JPG" style="left:23.39%;top:14.54%;width:26.61%">
+    <img src="images/R0050733.JPG" style="left:49.90%;top:14.72%;width:26.30%">
   </section>
-
-  <section class="path-screen" data-path-a="3">
-    <img src="images/R0050751.jpg" alt="" style="left:4.90%;top:17.22%;width:25.10%">
-    <img src="images/1747977347000_R0001768.JPG" alt="" style="left:36.41%;top:17.04%;width:25.42%">
-    <img src="images/R0050750.JPG" alt="" style="left:67.76%;top:17.04%;width:24.53%">
+  <section class="screen">
+    <img src="images/R0050751.jpg" style="left:4.90%;top:17.22%;width:25.10%">
+    <img src="images/1747977347000_R0001768.JPG" style="left:36.41%;top:17.04%;width:25.42%">
+    <img src="images/R0050750.JPG" style="left:67.76%;top:17.04%;width:24.53%">
   </section>
-
-  <section class="path-screen" data-path-a="4">
-    <img src="images/1747980886000_R0001771.JPG" alt="" style="left:0%;top:6.20%;width:32.86%">
-    <img src="images/1747980841000_R0001770.JPG" alt="" style="left:67.14%;top:6.20%;width:32.86%">
+  <section class="screen">
+    <img src="images/1747980886000_R0001771.JPG" style="left:0%;top:6.20%;width:32.86%">
+    <img src="images/1747980841000_R0001770.JPG" style="left:67.14%;top:6.20%;width:32.86%">
   </section>
-
-  <section class="path-screen" data-path-a="5">
-    <img src="images/1747980805000_R0001769.JPG" alt="" style="left:32.29%;top:0%;width:37.97%">
-    <img src="images/1747980927000_R0001772.JPG" alt="" style="left:32.29%;top:55.00%;width:37.97%">
+  <section class="screen">
+    <img src="images/1747980805000_R0001769.JPG" style="left:32.29%;top:0%;width:37.97%">
+    <img src="images/1747980927000_R0001772.JPG" style="left:32.29%;top:55%;width:37.97%">
   </section>
-
-  <section class="path-screen" data-path-a="6">
-    <img src="images/1747976318000_R0001767.jpg" alt="" style="left:37.60%;top:-6.85%;width:23.54%">
-    <img src="images/1747981033000_R0001773.JPG" alt="" style="left:37.60%;top:38.98%;width:23.54%">
+  <section class="screen">
+    <img src="images/1747976318000_R0001767.jpg" style="left:37.60%;top:-6.85%;width:23.54%">
+    <img src="images/1747981033000_R0001773.JPG" style="left:37.60%;top:38.98%;width:23.54%">
   </section>
-
-  <section class="path-screen" data-path-a="7">
-    <img src="images/R0050713.JPG" alt="" style="left:5.94%;top:32.69%;width:16.77%">
-    <img src="images/1747986797000_R0001795.JPG" alt="" style="left:28.39%;top:32.69%;width:16.88%">
-    <img src="images/IMG_2130.JPG" alt="" style="left:52.03%;top:32.69%;width:16.88%">
-    <img src="images/R0050702.JPG" alt="" style="left:76.46%;top:32.69%;width:16.77%">
+  <section class="screen">
+    <img src="images/R0050713.JPG" style="left:5.94%;top:32.69%;width:16.77%">
+    <img src="images/1747986797000_R0001795.JPG" style="left:28.39%;top:32.69%;width:16.88%">
+    <img src="images/IMG_2130.JPG" style="left:52.03%;top:32.69%;width:16.88%">
+    <img src="images/R0050702.JPG" style="left:76.46%;top:32.69%;width:16.77%">
   </section>
-
-  <section class="path-screen" data-path-a="8">
-    <img src="images/IMG_2133.JPG" alt="" style="left:34.06%;top:7.50%;width:31.88%">
+  <section class="screen">
+    <img src="images/IMG_2133.JPG" style="left:34.06%;top:7.50%;width:31.88%">
   </section>
-
-  <section class="path-screen" data-path-a="9">
-    <img src="images/1747984497000_R0001789.JPG" alt="" style="left:0.26%;top:5.00%;width:34.11%">
-    <img src="images/1747984501000_R0001790.JPG" alt="" style="left:34.11%;top:4.81%;width:34.32%">
-    <img src="images/1747984506000_R0001791.JPG" alt="" style="left:68.44%;top:5.19%;width:33.70%">
-    <img src="images/1747984487000_R0001788.JPG" alt="" style="left:0.63%;top:51.20%;width:33.70%">
-    <img src="images/1747984501000_R0001790.JPG" alt="" style="left:34.48%;top:51.11%;width:33.91%">
-    <img src="images/1747984506000_R0001791.JPG" alt="" style="left:68.39%;top:51.48%;width:33.33%">
+  <section class="screen">
+    <img src="images/1747984497000_R0001789.JPG" style="left:0.26%;top:5%;width:34.11%">
+    <img src="images/1747984501000_R0001790.JPG" style="left:34.11%;top:4.81%;width:34.32%">
+    <img src="images/1747984506000_R0001791.JPG" style="left:68.44%;top:5.19%;width:33.70%">
+    <img src="images/1747984487000_R0001788.JPG" style="left:0.63%;top:51.20%;width:33.70%">
+    <img src="images/1747984501000_R0001790.JPG" style="left:34.48%;top:51.11%;width:33.91%">
+    <img src="images/1747984506000_R0001791.JPG" style="left:68.39%;top:51.48%;width:33.33%">
   </section>
-
-  <section class="path-screen" data-path-a="10">
-    <img src="images/r001-014-Copy(1).jpg" alt="" style="left:34.06%;top:8.15%;width:31.93%">
+  <section class="screen">
+    <img src="images/r001-014-Copy(1).jpg" style="left:34.06%;top:8.15%;width:31.93%">
   </section>
-
-  <section class="path-screen" data-path-a="11">
-    <img src="images/r001-001-Copy(1).jpg" alt="" style="left:3.07%;top:5.00%;width:17.14%">
-    <img src="images/r001-012-Copy(1).jpg" alt="" style="left:43.91%;top:5.00%;width:17.14%">
+  <section class="screen">
+    <img src="images/r001-001-Copy(1).jpg" style="left:3.07%;top:5%;width:17.14%">
+    <img src="images/r001-012-Copy(1).jpg" style="left:43.91%;top:5%;width:17.14%">
   </section>
-
-  <section class="path-screen" data-path-a="12">
-    <img src="images/IMG_8475.JPG" alt="" style="left:6.15%;top:25.65%;width:37.97%">
-    <img src="images/R0050706.JPG" alt="" style="left:56.41%;top:25.65%;width:38.23%">
+  <section class="screen">
+    <img src="images/IMG_8475.JPG" style="left:6.15%;top:25.65%;width:37.97%">
+    <img src="images/R0050706.JPG" style="left:56.41%;top:25.65%;width:38.23%">
   </section>
-
-  <section class="path-screen" data-path-a="13">
-    <img src="images/1746254364000_R0001464.JPG" alt="" style="left:34.27%;top:8.06%;width:31.46%">
+  <section class="screen">
+    <img src="images/1746254364000_R0001464.JPG" style="left:34.27%;top:8.06%;width:31.46%">
   </section>
-
-  <section class="path-screen" data-path-a="14">
-    <img src="images/1747534939000_R0001760.JPG" alt="" style="left:31.04%;top:27.50%;width:37.97%;z-index:1">
-    <img src="images/1747534926000_R0001759.jpg" alt="" style="left:27.29%;top:18.06%;width:23.96%;z-index:2">
+  <section class="screen">
+    <img src="images/1747534939000_R0001760.JPG" style="left:31.04%;top:27.50%;width:37.97%">
+    <img src="images/1747534926000_R0001759.jpg" style="left:27.29%;top:18.06%;width:23.96%">
   </section>
-
-  <section class="path-screen" data-path-a="15">
-    <img src="images/1747983695000_R0001784.JPG" alt="" style="left:6.98%;top:21.85%;width:21.15%">
-    <img src="images/1747983700000_R0001785.JPG" alt="" style="left:38.91%;top:21.85%;width:21.15%">
-    <img src="images/1747983816000_R0001786.JPG" alt="" style="left:68.49%;top:21.85%;width:21.15%">
+  <section class="screen">
+    <img src="images/1747983695000_R0001784.JPG" style="left:6.98%;top:21.85%;width:21.15%">
+    <img src="images/1747983700000_R0001785.JPG" style="left:38.91%;top:21.85%;width:21.15%">
+    <img src="images/1747983816000_R0001786.JPG" style="left:68.49%;top:21.85%;width:21.15%">
   </section>
-
-  <section class="path-screen" data-path-a="16">
-    <img src="images/1747218059000_R0001745.JPG" alt="" style="left:0%;top:27.50%;width:37.97%">
-    <img src="images/1747218046000_R0001744.JPG" alt="" style="left:57.66%;top:27.50%;width:37.97%">
+  <section class="screen">
+    <img src="images/1747218059000_R0001745.JPG" style="left:0%;top:27.50%;width:37.97%">
+    <img src="images/1747218046000_R0001744.JPG" style="left:57.66%;top:27.50%;width:37.97%">
   </section>
-
-  <section class="path-screen" data-path-a="17">
-    <img src="images/1747218336000_R0001755.JPG" alt="" style="left:60.10%;top:6.76%;width:32.45%">
+  <section class="screen">
+    <img src="images/1747218336000_R0001755.JPG" style="left:60.10%;top:6.76%;width:32.45%">
   </section>
-
-  <section class="path-screen" data-path-a="18">
-    <img src="images/1747218279000_R0001751.JPG" alt="" style="left:6.77%;top:5.56%;width:37.97%">
-    <img src="images/1747218097000_R0001747.JPG" alt="" style="left:56.25%;top:5.56%;width:37.97%">
-    <img src="images/1747218013000_R0001740.JPG" alt="" style="left:6.77%;top:38.80%;width:16.88%">
-    <img src="images/1747218138000_R0001748.JPG" alt="" style="left:56.25%;top:38.80%;width:16.88%">
-  </section>
-
-</div>
-
-<!-- ═══════════════════════════════════════════════════════ -->
-<!--  ACT II — Path B (placeholder)                           -->
-<!-- ═══════════════════════════════════════════════════════ -->
-
-<div id="path-b" class="path-route" aria-label="Path B">
-  <section class="screen screen-path-b reveal">
-    <p>Path B — coming soon</p>
+  <section class="screen">
+    <img src="images/1747218279000_R0001751.JPG" style="left:6.77%;top:5.56%;width:37.97%">
+    <img src="images/1747218097000_R0001747.JPG" style="left:56.25%;top:5.56%;width:37.97%">
+    <img src="images/1747218013000_R0001740.JPG" style="left:6.77%;top:38.80%;width:16.88%">
+    <img src="images/1747218138000_R0001748.JPG" style="left:56.25%;top:38.80%;width:16.88%">
   </section>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════ -->
-<!--  ACT III — Convergence                                   -->
-<!-- ═══════════════════════════════════════════════════════ -->
-
-<div id="act-iii" class="path-route" aria-label="Act III">
-
-  <section class="screen screen-ending-photo reveal">
-    <img src="images/ending_fingerprints.jpg" alt="">
+<!-- ==================== PATH B (12 screens) ==================== -->
+<div class="path-container" id="pathB">
+  <section class="screen">
+    <img src="images/IMG_6771.JPG" style="left:-0.73%;top:-1.02%;width:53.02%">
+    <img src="images/DSCF0366.JPG" style="left:51.93%;top:-0.93%;width:48.59%">
   </section>
-
-  <section class="screen screen-ending-text reveal">
-    <div class="epilogue">
-      <p>你的每一个选择都把你带到了不同的地方</p>
-      <p>但无论你怎么选择</p>
-      <p>你都在成为你自己的路上</p>
-    </div>
+  <section class="screen">
+    <img src="images/DSCF0473 2.JPG" style="left:1.56%;top:15.09%;width:32.34%">
+    <img src="images/DSCF0475.JPG" style="left:33.80%;top:15.09%;width:32.34%">
+    <img src="images/DSCF0473.JPG" style="left:66.04%;top:15.09%;width:32.34%">
   </section>
-
-  <section class="screen screen-id-photo reveal">
-    <img src="images/id_photo_clean.jpg" alt="">
+  <section class="screen">
+    <img src="images/1746254715000_R0001509.jpg" style="left:41.56%;top:3.06%;width:16.88%">
+    <img src="images/1746254364000_R0001464.JPG" style="left:41.56%;top:53.06%;width:16.88%">
   </section>
+  <section class="screen">
+    <img src="images/1747218279000_R0001751.JPG" style="left:8.13%;top:0.93%;width:82.81%">
+    <img src="images/1747218097000_R0001747.JPG" style="left:31.04%;top:25.65%;width:37.97%">
+  </section>
+  <section class="screen">
+    <img src="images/1747218138000_R0001748.JPG" style="left:3.13%;top:5.56%;width:16.88%">
+  </section>
+  <section class="screen">
+    <img src="images/1747534939000_R0001760.JPG" style="left:16.46%;top:27.50%;width:67.14%">
+  </section>
+  <section class="screen">
+    <img src="images/R0050658.JPG" style="left:5.00%;top:14.91%;width:90.00%">
+  </section>
+  <section class="screen">
+    <img src="images/1740640455000_R0000729.jpg" style="left:24.64%;top:25.46%;width:16.88%">
+    <img src="images/R0050733.JPG" style="left:59.38%;top:25.46%;width:16.77%">
+  </section>
+  <section class="screen">
+    <img src="images/1740721244000_R0000801.JPG" style="left:-5.73%;top:47.69%;width:29.64%">
+    <img src="images/1740639931000_R0000706.JPG" style="left:21.98%;top:47.59%;width:29.90%">
+    <img src="images/1740639860000_R0000701.JPG" style="left:48.44%;top:47.22%;width:30.36%">
+    <img src="images/1740639591000_R0000687.JPG" style="left:72.34%;top:47.22%;width:30.52%">
+  </section>
+  <section class="screen">
+    <img src="images/R0050732.JPG" style="left:2.81%;top:11.57%;width:94.43%">
+    <img src="images/r001-014-Copy(1).jpg" style="left:2.81%;top:34.91%;width:12.14%">
+    <img src="images/IMG_2130.JPG" style="left:87.24%;top:34.91%;width:9.95%">
+    <img src="images/R0050736.JPG" style="left:14.90%;top:76.48%;width:82.29%">
+  </section>
+  <section class="screen">
+    <img src="images/IMG_8475.JPG" style="left:24.22%;top:19.44%;width:51.56%">
+  </section>
+  <section class="screen">
+    <img src="images/1740640282000_R0000722.JPG" style="left:31.04%;top:13.89%;width:37.97%">
+    <img src="images/1740640597000_R0000736.JPG" style="left:31.04%;top:51.48%;width:37.97%">
+  </section>
+</div>
 
+<!-- ==================== SHARED ENDING ==================== -->
+<div id="shared-ending">
+  <section class="screen" style="display:flex;align-items:center;justify-content:center">
+    <img src="images/1747986797000_R0001795.JPG" style="position:relative;max-width:60vw;max-height:80vh;object-fit:contain;opacity:0;transition:opacity 2s ease" alt="">
+  </section>
+  <section class="screen" id="ending-text">
+    <p>你的每一个选择都把你带到了不同的地方<br><br>但无论你怎么选择<br><br>你都在成为你自己的路上</p>
+  </section>
+  <section class="screen" id="ending-photo">
+    <img src="images/IMG_5512.PNG" alt="">
+  </section>
 </div>
 
 <script>
-(function () {
-  const choiceScreen = document.getElementById('screen-choice');
-  const pathA = document.getElementById('path-a');
-  const pathB = document.getElementById('path-b');
-  const actIII = document.getElementById('act-iii');
+function choosePath(path) {
+  const choice = document.getElementById('choice-screen');
+  choice.style.transition = 'opacity 1s ease';
+  choice.style.opacity = '0';
+  setTimeout(() => {
+    choice.style.display = 'none';
+    document.getElementById(path === 'A' ? 'pathA' : 'pathB').classList.add('active');
+    document.getElementById('shared-ending').classList.add('active');
+    observeAll();
+    const target = document.querySelector((path === 'A' ? '#pathA' : '#pathB') + ' .screen');
+    if (target) setTimeout(() => target.scrollIntoView({ behavior: 'smooth' }), 200);
+  }, 1000);
+}
 
-  function activatePath(route) {
-    choiceScreen.classList.add('is-done');
-
-    pathA.classList.remove('is-active');
-    pathB.classList.remove('is-active');
-    route.classList.add('is-active');
-    actIII.classList.add('is-active');
-
-    const first = route.querySelector('.path-screen, .screen');
-    setTimeout(function () {
-      choiceScreen.style.display = 'none';
-      if (first) {
-        first.scrollIntoView({ behavior: 'instant', block: 'start' });
-        observeAll();
+function observeAll() {
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        e.target.querySelectorAll('.title-main, #ending-text p, #ending-photo img').forEach(el => el.classList.add('visible'));
+        const fp = e.target.querySelector('img[src*="R0001795"]');
+        if (fp) fp.style.opacity = '1';
       }
-    }, 1000);
-  }
-
-  function onChooseA() { activatePath(pathA); }
-  function onChooseB() { activatePath(pathB); }
-
-  document.getElementById('choose-a').addEventListener('click', onChooseA);
-  document.getElementById('choose-b').addEventListener('click', onChooseB);
-
-  document.getElementById('choose-a').addEventListener('keydown', function (e) {
-    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onChooseA(); }
-  });
-  document.getElementById('choose-b').addEventListener('keydown', function (e) {
-    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onChooseB(); }
-  });
-
-  var observer = new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) {
-      if (entry.isIntersecting) entry.target.classList.add('in-view');
     });
-  }, { threshold: 0.12 });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.screen').forEach(s => obs.observe(s));
+}
 
-  function observeAll() {
-    document.querySelectorAll('.reveal, .path-screen').forEach(function (el) {
-      observer.observe(el);
-    });
-  }
+let hinted = false;
+window.addEventListener('scroll', () => {
+  if (!hinted && scrollY > 80) { hinted = true; document.getElementById('sh').classList.add('gone'); }
+}, { passive: true });
 
-  observeAll();
-})();
+observeAll();
 </script>
-
 </body>
 </html>
