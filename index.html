@@ -2,23 +2,34 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>everyday and epic</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap');
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-body {
+html, body {
   background: #0a0a0a;
-  color: #e8e4df;
-  font-family: 'Cormorant Garamond', serif;
+  width: 100%;
   overflow-x: hidden;
 }
 
+body {
+  color: #e8e4df;
+  font-family: 'Cormorant Garamond', serif;
+}
+
+/* ===== Scale wrapper: keeps desktop 16:9 layout, scales for any screen width ===== */
+#scale-wrap {
+  width: 1920px;
+  transform-origin: top left;
+  /* JS sets transform: scale() based on viewport width */
+}
+
 .screen {
-  width: 100vw;
-  height: 100vh;
+  width: 1920px;
+  height: 1080px;
   position: relative;
   overflow: hidden;
   opacity: 0;
@@ -34,15 +45,15 @@ body {
   align-items: center;
   justify-content: center;
   opacity: 1;
-  gap: clamp(1.5rem, 3vh, 3rem);
-  padding: 4rem 2rem;
+  gap: 40px;
+  padding: 80px 40px;
 }
 
 .choice-title {
   font-family: 'Cormorant Garamond', serif;
   font-weight: 300;
   font-style: italic;
-  font-size: clamp(1.5rem, 3.5vw, 2.8rem);
+  font-size: 52px;
   letter-spacing: 0.2em;
   color: #6B1C23;
   text-transform: lowercase;
@@ -56,13 +67,13 @@ body {
   font-family: 'Cormorant Garamond', serif;
   font-weight: 300;
   font-style: italic;
-  font-size: clamp(0.85rem, 1.4vw, 1.15rem);
+  font-size: 20px;
   letter-spacing: 0.6em;
   color: #aaa;
   text-transform: lowercase;
   opacity: 0;
   animation: subIn 2s ease 2.2s forwards;
-  margin-top: clamp(1.5rem, 3vh, 2.5rem);
+  margin-top: 40px;
 }
 
 @keyframes titleIn {
@@ -78,8 +89,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(1.5rem, 4vw, 5rem);
-  margin-top: clamp(1rem, 3vh, 3rem);
+  gap: 80px;
+  margin-top: 40px;
 }
 
 .choice-btn {
@@ -96,7 +107,7 @@ body {
 }
 .choice-btn img {
   position: relative;
-  height: clamp(220px, 50vh, 460px);
+  height: 540px;
   width: auto;
   object-fit: contain;
   filter: brightness(1);
@@ -111,7 +122,7 @@ body {
 }
 .choice-divider {
   width: 1px;
-  height: clamp(100px, 25vh, 240px);
+  height: 280px;
   background: #222;
   opacity: 0;
   animation: faceIn 2s ease 1.5s forwards;
@@ -124,39 +135,6 @@ body {
 #shared-ending.active { display: block; }
 
 /* ============ ENDING ============ */
-#ending-fingerprint {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-#ending-fingerprint img {
-  position: relative;
-  max-width: 60vw;
-  max-height: 80vh;
-  object-fit: contain;
-  opacity: 0;
-  transition: opacity 2.5s ease;
-}
-#ending-fingerprint img.visible { opacity: 1; }
-
-#ending-text {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 3rem;
-}
-#ending-text p {
-  font-size: clamp(0.95rem, 2.2vw, 1.5rem);
-  font-weight: 300;
-  line-height: 2.4;
-  letter-spacing: 0.06em;
-  max-width: 600px;
-  opacity: 0;
-  transition: opacity 2.5s ease;
-}
-#ending-text p.visible { opacity: 1; }
-
 #ending-photo {
   display: flex;
   align-items: center;
@@ -164,8 +142,8 @@ body {
 }
 #ending-photo img {
   position: relative;
-  max-height: 65vh;
-  max-width: 55vw;
+  max-height: 700px;
+  max-width: 1050px;
   object-fit: contain;
   opacity: 0;
   transition: opacity 2.5s ease;
@@ -179,20 +157,20 @@ body {
   align-items: center;
   justify-content: center;
   text-align: center;
-  gap: clamp(1.5rem, 4vh, 3rem);
-  padding: 3rem;
+  gap: 48px;
+  padding: 48px;
 }
 .walk-link {
   font-family: 'Cormorant Garamond', serif;
   font-weight: 300;
   font-style: italic;
-  font-size: clamp(1.4rem, 3.5vw, 2.6rem);
+  font-size: 52px;
   letter-spacing: 0.15em;
   color: #e8e4df;
   background: none;
   border: none;
   cursor: pointer;
-  padding: 0.5rem 1rem;
+  padding: 8px 16px;
   opacity: 0;
   transition: opacity 2.5s ease, color 0.6s, letter-spacing 0.6s;
   text-transform: lowercase;
@@ -205,22 +183,13 @@ body {
 .walk-sub-en {
   font-style: italic;
   font-weight: 300;
-  font-size: clamp(0.85rem, 1.5vw, 1.15rem);
+  font-size: 22px;
   letter-spacing: 0.18em;
   color: #888;
   opacity: 0;
   transition: opacity 2.5s ease 0.4s;
 }
 .walk-sub-en.visible { opacity: 1; }
-.walk-sub-zh {
-  font-weight: 300;
-  font-size: clamp(0.75rem, 1.2vw, 0.95rem);
-  letter-spacing: 0.4em;
-  color: #555;
-  opacity: 0;
-  transition: opacity 2.5s ease 0.8s;
-}
-.walk-sub-zh.visible { opacity: 1; }
 
 .scroll-hint {
   position: fixed;
@@ -239,6 +208,8 @@ body {
 <body>
 
 <div class="scroll-hint" id="sh">SCROLL</div>
+
+<div id="scale-wrap">
 
 <!-- ==================== OPENING + CHOICE (merged) ==================== -->
 <section class="screen visible" id="choice-screen">
@@ -337,78 +308,117 @@ body {
   </section>
 </div>
 
-<!-- ==================== PATH B (12 screens) ==================== -->
+<!-- ==================== PATH B (was 13, removed dog screen → 11 actual) ==================== -->
 <div class="path-container" id="pathB">
+  <!-- B-01: 三张并排 DSCF -->
   <section class="screen">
-    <img src="images/IMG_6771.JPG" style="left:-0.73%;top:-1.02%;width:53.02%">
-    <img src="images/DSCF0366.JPG" style="left:51.93%;top:-0.93%;width:48.59%">
+    <img src="images/DSCF0473 2.JPG" style="left:1.50%;top:15.09%;width:31.05%;height:57.50%">
+    <img src="images/DSCF0475.JPG" style="left:32.45%;top:15.09%;width:31.05%;height:57.50%">
+    <img src="images/DSCF0473.JPG" style="left:63.40%;top:15.09%;width:31.05%;height:57.50%">
   </section>
+  <!-- B-03: 两张胶片菜市场，上下叠 -->
   <section class="screen">
-    <img src="images/DSCF0473 2.JPG" style="left:1.56%;top:15.09%;width:32.34%">
-    <img src="images/DSCF0475.JPG" style="left:33.80%;top:15.09%;width:32.34%">
-    <img src="images/DSCF0473.JPG" style="left:66.04%;top:15.09%;width:32.34%">
+    <img src="images/1746254715000_R0001509.jpg" style="left:39.90%;top:3.06%;width:16.20%;height:45.00%">
+    <img src="images/1746254364000_R0001464.JPG" style="left:39.90%;top:53.06%;width:16.20%;height:45.00%">
   </section>
+  <!-- B-04: 大菜市场 + 小图叠加 -->
   <section class="screen">
-    <img src="images/1746254715000_R0001509.jpg" style="left:41.56%;top:3.06%;width:16.88%">
-    <img src="images/1746254364000_R0001464.JPG" style="left:41.56%;top:53.06%;width:16.88%">
+    <img src="images/1747218279000_R0001751.JPG" style="left:7.80%;top:0.93%;width:79.50%;height:98.15%">
+    <img src="images/1747218097000_R0001747.JPG" style="left:29.80%;top:25.65%;width:36.45%;height:45.00%">
   </section>
+  <!-- B-05: 单张小竖图 -->
   <section class="screen">
-    <img src="images/1747218279000_R0001751.JPG" style="left:8.13%;top:0.93%;width:82.81%">
-    <img src="images/1747218097000_R0001747.JPG" style="left:31.04%;top:25.65%;width:37.97%">
+    <img src="images/1747218138000_R0001748.JPG" style="left:3.00%;top:5.56%;width:16.20%;height:45.00%">
   </section>
+  <!-- B-06: 单张横图 -->
   <section class="screen">
-    <img src="images/1747218138000_R0001748.JPG" style="left:3.13%;top:5.56%;width:16.88%">
+    <img src="images/1747534939000_R0001760.JPG" style="left:15.80%;top:27.50%;width:64.45%;height:45.00%">
   </section>
+  <!-- B-07: 单张大横图（维修工） -->
   <section class="screen">
-    <img src="images/1747534939000_R0001760.JPG" style="left:16.46%;top:27.50%;width:67.14%">
+    <img src="images/R0050658.JPG" style="left:4.80%;top:14.91%;width:86.40%;height:70.09%">
   </section>
+  <!-- B-08: 两张胶片（花瓶/菜场） -->
   <section class="screen">
-    <img src="images/R0050658.JPG" style="left:5.00%;top:14.91%;width:90.00%">
+    <img src="images/1740640455000_R0000729.jpg" style="left:23.65%;top:25.46%;width:16.20%;height:45.00%">
+    <img src="images/R0050733.JPG" style="left:57.00%;top:25.46%;width:16.10%;height:45.00%">
   </section>
+  <!-- B-09: 四张胶片菜场连排 -->
   <section class="screen">
-    <img src="images/1740640455000_R0000729.jpg" style="left:24.64%;top:25.46%;width:16.88%">
-    <img src="images/R0050733.JPG" style="left:59.38%;top:25.46%;width:16.77%">
+    <img src="images/1740721244000_R0000801.JPG" style="left:-5.50%;top:47.69%;width:28.45%;height:35.09%">
+    <img src="images/1740639931000_R0000706.JPG" style="left:21.10%;top:47.59%;width:28.70%;height:35.37%">
+    <img src="images/1740639860000_R0000701.JPG" style="left:46.50%;top:47.22%;width:29.15%;height:36.02%">
+    <img src="images/1740639591000_R0000687.JPG" style="left:69.45%;top:47.22%;width:29.30%;height:36.20%">
   </section>
+  <!-- B-10: 四张混排（鱼+鸡蛋+鞋+杂物） -->
   <section class="screen">
-    <img src="images/1740721244000_R0000801.JPG" style="left:-5.73%;top:47.69%;width:29.64%">
-    <img src="images/1740639931000_R0000706.JPG" style="left:21.98%;top:47.59%;width:29.90%">
-    <img src="images/1740639860000_R0000701.JPG" style="left:48.44%;top:47.22%;width:30.36%">
-    <img src="images/1740639591000_R0000687.JPG" style="left:72.34%;top:47.22%;width:30.52%">
+    <img src="images/R0050732.JPG" style="left:2.70%;top:11.57%;width:90.65%;height:23.33%">
+    <img src="images/r001-014-Copy(1).jpg" style="left:2.70%;top:34.91%;width:11.65%;height:61.48%">
+    <img src="images/IMG_2130.JPG" style="left:83.75%;top:34.91%;width:9.55%;height:41.57%">
+    <img src="images/R0050736.JPG" style="left:14.30%;top:76.48%;width:79.00%;height:19.91%">
   </section>
+  <!-- B-11: 单张服装店女孩 -->
   <section class="screen">
-    <img src="images/R0050732.JPG" style="left:2.81%;top:11.57%;width:94.43%">
-    <img src="images/r001-014-Copy(1).jpg" style="left:2.81%;top:34.91%;width:12.14%">
-    <img src="images/IMG_2130.JPG" style="left:87.24%;top:34.91%;width:9.95%">
-    <img src="images/R0050736.JPG" style="left:14.90%;top:76.48%;width:82.29%">
+    <img src="images/IMG_8475.JPG" style="left:23.25%;top:19.44%;width:49.50%;height:61.11%">
   </section>
+  <!-- B-12: 上下两张胶片菜市场 -->
   <section class="screen">
-    <img src="images/IMG_8475.JPG" style="left:24.22%;top:19.44%;width:51.56%">
-  </section>
-  <section class="screen">
-    <img src="images/1740640282000_R0000722.JPG" style="left:31.04%;top:13.89%;width:37.97%">
-    <img src="images/1740640597000_R0000736.JPG" style="left:31.04%;top:51.48%;width:37.97%">
+    <img src="images/1740640282000_R0000722.JPG" style="left:29.80%;top:13.89%;width:36.45%;height:34.54%">
+    <img src="images/1740640597000_R0000736.JPG" style="left:29.80%;top:51.48%;width:36.45%;height:40.00%">
   </section>
 </div>
 
 <!-- ==================== SHARED ENDING ==================== -->
 <div id="shared-ending">
-  <section class="screen" id="ending-fingerprint">
-    <img src="images/1747986797000_R0001795.JPG" alt="">
-  </section>
-  <section class="screen" id="ending-text">
-    <p>你的每一个选择都把你带到了不同的地方<br><br>但无论你怎么选择<br><br>你都在成为你自己的路上</p>
-  </section>
   <section class="screen" id="ending-photo">
     <img src="images/IMG_5512.PNG" alt="">
   </section>
   <section class="screen" id="walk-back">
     <button class="walk-link" onclick="walkAnotherWay()">walk another way</button>
     <div class="walk-sub-en">Every road leads me</div>
-    <div class="walk-sub-zh">每 条 路 都 走 向 我 自 己</div>
   </section>
 </div>
+<!-- /shared-ending -->
+
+</div>
+<!-- /scale-wrap -->
 
 <script>
+/* ===== Responsive scaling: desktop uses scaled 1920 design; mobile uses native viewport ===== */
+function scaleApp() {
+  const wrap = document.getElementById('scale-wrap');
+  if (!wrap) return;
+  const designWidth = 1920;
+  const designHeight = 1080;
+  const isMobile = window.innerWidth < 768;
+
+  if (isMobile) {
+    // Mobile: scale so one screen fills the mobile viewport height (not width)
+    // This keeps each .screen filling the visible area without huge black bars
+    const scale = window.innerHeight / designHeight;
+    wrap.style.transform = 'scale(' + scale + ')';
+    wrap.style.width = designWidth + 'px';
+    // Horizontal overflow will be cropped, content stays centered on width
+    wrap.style.transformOrigin = 'top left';
+    // Center horizontally: shift wrap so center of design is at center of viewport
+    const scaledWidth = designWidth * scale;
+    const offsetX = (window.innerWidth - scaledWidth) / 2;
+    wrap.style.marginLeft = offsetX + 'px';
+    document.body.style.height = (wrap.scrollHeight * scale) + 'px';
+  } else {
+    // Desktop: scale to fill viewport width
+    const scale = window.innerWidth / designWidth;
+    wrap.style.transform = 'scale(' + scale + ')';
+    wrap.style.width = designWidth + 'px';
+    wrap.style.transformOrigin = 'top left';
+    wrap.style.marginLeft = '0px';
+    document.body.style.height = (wrap.scrollHeight * scale) + 'px';
+  }
+}
+window.addEventListener('resize', scaleApp);
+window.addEventListener('load', scaleApp);
+scaleApp();
+
 function choosePath(path) {
   const choice = document.getElementById('choice-screen');
   choice.style.transition = 'opacity 1s ease';
@@ -417,6 +427,7 @@ function choosePath(path) {
     choice.style.display = 'none';
     document.getElementById(path === 'A' ? 'pathA' : 'pathB').classList.add('active');
     document.getElementById('shared-ending').classList.add('active');
+    scaleApp();
     observeAll();
     window.scrollTo({ top: 0, behavior: 'instant' });
     setTimeout(() => {
@@ -441,8 +452,9 @@ function walkAnotherWay() {
     document.querySelectorAll('.screen.visible').forEach(s => {
       if (s.id !== 'choice-screen') s.classList.remove('visible');
     });
-    document.querySelectorAll('.walk-link, .walk-sub-en, .walk-sub-zh, #ending-text p, #ending-photo img, #ending-fingerprint img').forEach(el => el.classList.remove('visible'));
+    document.querySelectorAll('.walk-link, .walk-sub-en, #ending-photo img').forEach(el => el.classList.remove('visible'));
     window.scrollTo({ top: 0, behavior: 'instant' });
+    scaleApp();
     document.body.style.opacity = '1';
   }, 800);
 }
@@ -452,7 +464,7 @@ function observeAll() {
     entries.forEach(e => {
       if (e.isIntersecting) {
         e.target.classList.add('visible');
-        e.target.querySelectorAll('#ending-text p, #ending-photo img, #ending-fingerprint img, .walk-link, .walk-sub-en, .walk-sub-zh').forEach(el => el.classList.add('visible'));
+        e.target.querySelectorAll('#ending-photo img, .walk-link, .walk-sub-en').forEach(el => el.classList.add('visible'));
       }
     });
   }, { threshold: 0.15 });
