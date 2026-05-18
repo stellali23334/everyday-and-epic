@@ -134,22 +134,6 @@ body {
 #shared-ending { display: none; }
 #shared-ending.active { display: block; }
 
-/* ============ ENDING ============ */
-#ending-photo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-#ending-photo img {
-  position: relative;
-  max-height: 700px;
-  max-width: 1050px;
-  object-fit: contain;
-  opacity: 0;
-  transition: opacity 2.5s ease;
-}
-#ending-photo img.visible { opacity: 1; }
-
 /* ============ FINAL "WALK ANOTHER WAY" SCREEN ============ */
 #walk-back {
   display: flex;
@@ -370,9 +354,6 @@ body {
 
 <!-- ==================== SHARED ENDING ==================== -->
 <div id="shared-ending">
-  <section class="screen" id="ending-photo">
-    <img src="images/IMG_5512.PNG" alt="">
-  </section>
   <section class="screen" id="walk-back">
     <button class="walk-link" onclick="walkAnotherWay()">walk another way</button>
     <div class="walk-sub-en">Every road leads me</div>
@@ -452,7 +433,7 @@ function walkAnotherWay() {
     document.querySelectorAll('.screen.visible').forEach(s => {
       if (s.id !== 'choice-screen') s.classList.remove('visible');
     });
-    document.querySelectorAll('.walk-link, .walk-sub-en, #ending-photo img').forEach(el => el.classList.remove('visible'));
+    document.querySelectorAll('.walk-link, .walk-sub-en').forEach(el => el.classList.remove('visible'));
     window.scrollTo({ top: 0, behavior: 'instant' });
     scaleApp();
     document.body.style.opacity = '1';
@@ -464,7 +445,7 @@ function observeAll() {
     entries.forEach(e => {
       if (e.isIntersecting) {
         e.target.classList.add('visible');
-        e.target.querySelectorAll('#ending-photo img, .walk-link, .walk-sub-en').forEach(el => el.classList.add('visible'));
+        e.target.querySelectorAll('.walk-link, .walk-sub-en').forEach(el => el.classList.add('visible'));
       }
     });
   }, { threshold: 0.15 });
