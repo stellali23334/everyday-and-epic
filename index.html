@@ -38,6 +38,7 @@ body {
   opacity: 0;
   transition: opacity 1.2s ease;
   contain: layout style paint;
+  contain-intrinsic-size: 1920px 1080px;
 }
 .screen.visible { opacity: 1; }
 .screen img { position: absolute; object-fit: cover; height: auto; }
@@ -488,6 +489,25 @@ document.querySelectorAll('#choice-screen img').forEach(function (img) {
   img.decoding = 'async';
 });
 
+let renderObs = null;
+
+function initRenderObserver() {
+  if (renderObs) { renderObs.disconnect(); renderObs = null; }
+  var scale = parseFloat(
+    getComputedStyle(document.documentElement).getPropertyValue('--app-scale') || '1'
+  );
+  // rootMargin = 1 screen-height in viewport-px, correcting for transform:scale distortion
+  var margin = Math.round(1080 * scale) + 'px 0px';
+  renderObs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      e.target.style.contentVisibility = e.isIntersecting ? '' : 'hidden';
+    });
+  }, { rootMargin: margin });
+  document.querySelectorAll(
+    '.path-container.active .screen, #shared-ending.active .screen'
+  ).forEach(function(s) { renderObs.observe(s); });
+}
+
 function choosePath(path) {
   const choice = document.getElementById('choice-screen');
   choice.style.transition = 'opacity 1s ease';
@@ -498,6 +518,7 @@ function choosePath(path) {
     document.getElementById('shared-ending').classList.add('active');
     scheduleScaleApp();
     observeAll();
+    initRenderObserver();
     scrollToTop('auto');
     setTimeout(() => {
       scheduleScaleApp();
@@ -512,6 +533,9 @@ function walkAnotherWay() {
   document.body.style.transition = 'opacity 0.8s ease';
   document.body.style.opacity = '0';
   setTimeout(() => {
+    if (renderObs) { renderObs.disconnect(); renderObs = null; }
+    document.querySelectorAll('.path-container .screen, #shared-ending .screen')
+      .forEach(function(s) { s.style.contentVisibility = ''; });
     document.getElementById('pathA').classList.remove('active');
     document.getElementById('pathB').classList.remove('active');
     document.getElementById('shared-ending').classList.remove('active');
