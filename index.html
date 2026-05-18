@@ -187,6 +187,17 @@ body {
   transition: opacity 1s;
 }
 .scroll-hint.gone { opacity: 0; pointer-events: none; }
+
+/* Mobile: one design screen ≈ one viewport; desktop layout unchanged (JS scales) */
+@media (max-width: 767px) {
+  html {
+    scroll-snap-type: y proximity;
+    -webkit-overflow-scrolling: touch;
+  }
+  .screen {
+    scroll-snap-align: start;
+  }
+}
 </style>
 </head>
 <body>
@@ -365,39 +376,60 @@ body {
 <!-- /scale-wrap -->
 
 <script>
-/* ===== Responsive scaling: desktop uses scaled 1920 design; mobile uses native viewport ===== */
+/* ===== Responsive scaling: desktop = width-fit (unchanged); mobile = height-fit, same 1920 canvas ===== */
+const DESIGN_W = 1920;
+const DESIGN_H = 1080;
+const MOBILE_BP = 768;
+
+function getViewportSize() {
+  const vv = window.visualViewport;
+  return {
+    width: vv ? vv.width : window.innerWidth,
+    height: vv ? vv.height : window.innerHeight
+  };
+}
+
 function scaleApp() {
   const wrap = document.getElementById('scale-wrap');
   if (!wrap) return;
-  const designWidth = 1920;
-  const designHeight = 1080;
-  const isMobile = window.innerWidth < 768;
+
+  const { width: vw, height: vh } = getViewportSize();
+  const isMobile = vw < MOBILE_BP;
+
+  // PC: scale to viewport width (same as before). Phone: scale to viewport height so each screen fills the screen.
+  const scale = isMobile ? (vh / DESIGN_H) : (vw / DESIGN_W);
+
+  wrap.style.width = DESIGN_W + 'px';
+  wrap.style.transformOrigin = 'top left';
+  wrap.style.transform = 'scale(' + scale + ')';
 
   if (isMobile) {
-    // Mobile: scale so one screen fills the mobile viewport height (not width)
-    // This keeps each .screen filling the visible area without huge black bars
-    const scale = window.innerHeight / designHeight;
-    wrap.style.transform = 'scale(' + scale + ')';
-    wrap.style.width = designWidth + 'px';
-    // Horizontal overflow will be cropped, content stays centered on width
-    wrap.style.transformOrigin = 'top left';
-    // Center horizontally: shift wrap so center of design is at center of viewport
-    const scaledWidth = designWidth * scale;
-    const offsetX = (window.innerWidth - scaledWidth) / 2;
-    wrap.style.marginLeft = offsetX + 'px';
-    document.body.style.height = (wrap.scrollHeight * scale) + 'px';
+    const scaledW = DESIGN_W * scale;
+    wrap.style.marginLeft = Math.max(0, (vw - scaledW) / 2) + 'px';
   } else {
-    // Desktop: scale to fill viewport width
-    const scale = window.innerWidth / designWidth;
-    wrap.style.transform = 'scale(' + scale + ')';
-    wrap.style.width = designWidth + 'px';
-    wrap.style.transformOrigin = 'top left';
     wrap.style.marginLeft = '0px';
-    document.body.style.height = (wrap.scrollHeight * scale) + 'px';
   }
+
+  // transform does not shrink layout box — adjust flow so scroll distance matches visual size
+  const layoutH = wrap.offsetHeight;
+  wrap.style.marginBottom = (layoutH * (scale - 1)) + 'px';
+
+  document.documentElement.style.setProperty('--app-scale', String(scale));
 }
+
+function scrollToScreen(el, behavior) {
+  if (!el) return;
+  const y = el.getBoundingClientRect().top + window.scrollY;
+  window.scrollTo({ top: y, behavior: behavior || 'smooth' });
+}
+
 window.addEventListener('resize', scaleApp);
+window.addEventListener('orientationchange', scaleApp);
 window.addEventListener('load', scaleApp);
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', scaleApp);
+  window.visualViewport.addEventListener('scroll', scaleApp);
+}
 scaleApp();
 
 function choosePath(path) {
@@ -412,8 +444,9 @@ function choosePath(path) {
     observeAll();
     window.scrollTo({ top: 0, behavior: 'instant' });
     setTimeout(() => {
+      scaleApp();
       const target = document.querySelector((path === 'A' ? '#pathA' : '#pathB') + ' .screen');
-      if (target) target.scrollIntoView({ behavior: 'smooth' });
+      scrollToScreen(target, 'smooth');
     }, 200);
   }, 1000);
 }
