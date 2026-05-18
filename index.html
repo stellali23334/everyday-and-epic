@@ -4,8 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>everyday and epic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap"></noscript>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap');
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -17,7 +20,7 @@ html, body {
 
 body {
   color: #e8e4df;
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
 }
 
 /* ===== Scale wrapper: keeps desktop 16:9 layout, scales for any screen width ===== */
@@ -402,6 +405,7 @@ function getScaleMode(vw, vh) {
   return vh > vw ? 'mobile-b' : 'mobile-a';
 }
 
+let scaleRaf = 0;
 function scaleApp() {
   const wrap = document.getElementById('scale-wrap');
   if (!wrap) return;
@@ -436,20 +440,46 @@ function scaleApp() {
   document.documentElement.style.setProperty('--app-scale', String(scale));
 }
 
+function scheduleScaleApp() {
+  cancelAnimationFrame(scaleRaf);
+  scaleRaf = requestAnimationFrame(scaleApp);
+}
+
+function scrollToTop(behavior) {
+  const y = 0;
+  try {
+    window.scrollTo({ top: y, left: 0, behavior: behavior || 'auto' });
+  } catch (e) {
+    window.scrollTo(0, y);
+  }
+}
+
 function scrollToScreen(el, behavior) {
   if (!el) return;
   const y = el.getBoundingClientRect().top + window.scrollY;
-  window.scrollTo({ top: y, behavior: behavior || 'smooth' });
+  try {
+    window.scrollTo({ top: y, left: 0, behavior: behavior || 'smooth' });
+  } catch (e) {
+    window.scrollTo(0, y);
+  }
 }
 
-window.addEventListener('resize', scaleApp);
-window.addEventListener('orientationchange', scaleApp);
-window.addEventListener('load', scaleApp);
+window.addEventListener('resize', scheduleScaleApp);
+window.addEventListener('orientationchange', scheduleScaleApp);
+window.addEventListener('load', scheduleScaleApp);
 if (window.visualViewport) {
-  window.visualViewport.addEventListener('resize', scaleApp);
-  window.visualViewport.addEventListener('scroll', scaleApp);
+  window.visualViewport.addEventListener('resize', scheduleScaleApp);
 }
-scaleApp();
+scheduleScaleApp();
+
+document.querySelectorAll('#pathA img, #pathB img').forEach(function (img) {
+  img.loading = 'lazy';
+  img.decoding = 'async';
+});
+document.querySelectorAll('#choice-screen img').forEach(function (img) {
+  img.loading = 'eager';
+  img.decoding = 'async';
+});
 
 function choosePath(path) {
   const choice = document.getElementById('choice-screen');
@@ -459,11 +489,11 @@ function choosePath(path) {
     choice.style.display = 'none';
     document.getElementById(path === 'A' ? 'pathA' : 'pathB').classList.add('active');
     document.getElementById('shared-ending').classList.add('active');
-    scaleApp();
+    scheduleScaleApp();
     observeAll();
-    window.scrollTo({ top: 0, behavior: 'instant' });
+    scrollToTop('auto');
     setTimeout(() => {
-      scaleApp();
+      scheduleScaleApp();
       const target = document.querySelector((path === 'A' ? '#pathA' : '#pathB') + ' .screen');
       scrollToScreen(target, 'smooth');
     }, 200);
@@ -486,8 +516,8 @@ function walkAnotherWay() {
       if (s.id !== 'choice-screen') s.classList.remove('visible');
     });
     document.querySelectorAll('.walk-link, .walk-sub-en').forEach(el => el.classList.remove('visible'));
-    window.scrollTo({ top: 0, behavior: 'instant' });
-    scaleApp();
+    scrollToTop('auto');
+    scheduleScaleApp();
     document.body.style.opacity = '1';
   }, 800);
 }
