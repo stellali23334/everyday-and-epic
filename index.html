@@ -37,6 +37,7 @@ body {
   overflow: hidden;
   opacity: 0;
   transition: opacity 1.2s ease;
+  contain: layout style paint;
 }
 .screen.visible { opacity: 1; }
 .screen img { position: absolute; object-fit: cover; height: auto; }
@@ -467,8 +468,18 @@ function scrollToScreen(el, behavior) {
 window.addEventListener('resize', scheduleScaleApp);
 window.addEventListener('orientationchange', scheduleScaleApp);
 window.addEventListener('load', scheduleScaleApp);
+let scaleDebounceTid = 0;
+function debounceScaleApp(ms) {
+  clearTimeout(scaleDebounceTid);
+  scaleDebounceTid = setTimeout(scheduleScaleApp, ms);
+}
+function onVVResize() {
+  const vv = window.visualViewport;
+  // pinch-zoom: scale > 1 means user is actively zooming — wait longer before recalculating
+  debounceScaleApp((vv && vv.scale > 1.01) ? 200 : 120);
+}
 if (window.visualViewport) {
-  window.visualViewport.addEventListener('resize', scheduleScaleApp);
+  window.visualViewport.addEventListener('resize', onVVResize);
 }
 scheduleScaleApp();
 
@@ -528,6 +539,7 @@ function observeAll() {
       if (e.isIntersecting) {
         e.target.classList.add('visible');
         e.target.querySelectorAll('.walk-link, .walk-sub-en').forEach(el => el.classList.add('visible'));
+        obs.unobserve(e.target);
       }
     });
   }, { threshold: 0.15 });
