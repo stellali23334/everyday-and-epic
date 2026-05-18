@@ -128,27 +128,8 @@ body {
   animation: faceIn 2s ease 1.5s forwards;
 }
 
-/* ============ PATH CONTAINERS ============ */
-.path-container { display: none; }
-.path-container.active { display: block; }
 #shared-ending { display: none; }
 #shared-ending.active { display: block; }
-
-/* ============ ENDING ============ */
-#ending-photo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-#ending-photo img {
-  position: relative;
-  max-height: 700px;
-  max-width: 1050px;
-  object-fit: contain;
-  opacity: 0;
-  transition: opacity 2.5s ease;
-}
-#ending-photo img.visible { opacity: 1; }
 
 /* ============ FINAL "WALK ANOTHER WAY" SCREEN ============ */
 #walk-back {
@@ -226,154 +207,9 @@ body {
   <div class="choice-subtitle">choose a face</div>
 </section>
 
-<!-- ==================== PATH A (18 screens) ==================== -->
-<div class="path-container" id="pathA">
-  <section class="screen">
-    <img src="images/R0050732.JPG" style="left:11.72%;top:28.43%;width:38.23%">
-    <img src="images/R0050736.JPG" style="left:49.95%;top:28.43%;width:38.23%">
-  </section>
-  <section class="screen">
-    <img src="images/1747981098000_R0001774.JPG" style="left:23.39%;top:14.54%;width:26.61%">
-    <img src="images/R0050733.JPG" style="left:49.90%;top:14.72%;width:26.30%">
-  </section>
-  <section class="screen">
-    <img src="images/R0050751.jpg" style="left:4.90%;top:17.22%;width:25.10%">
-    <img src="images/1747977347000_R0001768.JPG" style="left:36.41%;top:17.04%;width:25.42%">
-    <img src="images/R0050750.JPG" style="left:67.76%;top:17.04%;width:24.53%">
-  </section>
-  <section class="screen">
-    <img src="images/1747980886000_R0001771.JPG" style="left:0%;top:6.20%;width:32.86%">
-    <img src="images/1747980841000_R0001770.JPG" style="left:67.14%;top:6.20%;width:32.86%">
-  </section>
-  <section class="screen">
-    <img src="images/1747980805000_R0001769.JPG" style="left:32.29%;top:0%;width:37.97%">
-    <img src="images/1747980927000_R0001772.JPG" style="left:32.29%;top:55%;width:37.97%">
-  </section>
-  <section class="screen">
-    <img src="images/1747976318000_R0001767.jpg" style="left:37.60%;top:-6.85%;width:23.54%">
-    <img src="images/1747981033000_R0001773.JPG" style="left:37.60%;top:38.98%;width:23.54%">
-  </section>
-  <section class="screen">
-    <img src="images/R0050713.JPG" style="left:5.94%;top:32.69%;width:16.77%">
-    <img src="images/1747986797000_R0001795.JPG" style="left:28.39%;top:32.69%;width:16.88%">
-    <img src="images/IMG_2130.JPG" style="left:52.03%;top:32.69%;width:16.88%">
-    <img src="images/R0050702.JPG" style="left:76.46%;top:32.69%;width:16.77%">
-  </section>
-  <section class="screen">
-    <img src="images/IMG_2133.JPG" style="left:34.06%;top:7.50%;width:31.88%">
-  </section>
-  <section class="screen">
-    <img src="images/1747984497000_R0001789.JPG" style="left:0.26%;top:5%;width:34.11%">
-    <img src="images/1747984501000_R0001790.JPG" style="left:34.11%;top:4.81%;width:34.32%">
-    <img src="images/1747984506000_R0001791.JPG" style="left:68.44%;top:5.19%;width:33.70%">
-    <img src="images/1747984487000_R0001788.JPG" style="left:0.63%;top:51.20%;width:33.70%">
-    <img src="images/1747984501000_R0001790.JPG" style="left:34.48%;top:51.11%;width:33.91%">
-    <img src="images/1747984506000_R0001791.JPG" style="left:68.39%;top:51.48%;width:33.33%">
-  </section>
-  <section class="screen">
-    <img src="images/r001-014-Copy(1).jpg" style="left:34.06%;top:8.15%;width:31.93%">
-  </section>
-  <section class="screen">
-    <img src="images/r001-001-Copy(1).jpg" style="left:3.07%;top:5%;width:17.14%">
-    <img src="images/r001-012-Copy(1).jpg" style="left:43.91%;top:5%;width:17.14%">
-  </section>
-  <section class="screen">
-    <img src="images/IMG_8475.JPG" style="left:6.15%;top:25.65%;width:37.97%">
-    <img src="images/R0050706.JPG" style="left:56.41%;top:25.65%;width:38.23%">
-  </section>
-  <section class="screen">
-    <img src="images/1746254364000_R0001464.JPG" style="left:34.27%;top:8.06%;width:31.46%">
-  </section>
-  <section class="screen">
-    <img src="images/1747534939000_R0001760.JPG" style="left:31.04%;top:27.50%;width:37.97%">
-    <img src="images/1747534926000_R0001759.jpg" style="left:27.29%;top:18.06%;width:23.96%">
-  </section>
-  <section class="screen">
-    <img src="images/1747983695000_R0001784.JPG" style="left:6.98%;top:21.85%;width:21.15%">
-    <img src="images/1747983700000_R0001785.JPG" style="left:38.91%;top:21.85%;width:21.15%">
-    <img src="images/1747983816000_R0001786.JPG" style="left:68.49%;top:21.85%;width:21.15%">
-  </section>
-  <section class="screen">
-    <img src="images/1747218059000_R0001745.JPG" style="left:0%;top:27.50%;width:37.97%">
-    <img src="images/1747218046000_R0001744.JPG" style="left:57.66%;top:27.50%;width:37.97%">
-  </section>
-  <section class="screen">
-    <img src="images/1747218336000_R0001755.JPG" style="left:60.10%;top:6.76%;width:32.45%">
-  </section>
-  <section class="screen">
-    <img src="images/1747218279000_R0001751.JPG" style="left:6.77%;top:5.56%;width:37.97%">
-    <img src="images/1747218097000_R0001747.JPG" style="left:56.25%;top:5.56%;width:37.97%">
-    <img src="images/1747218013000_R0001740.JPG" style="left:6.77%;top:38.80%;width:16.88%">
-    <img src="images/1747218138000_R0001748.JPG" style="left:56.25%;top:38.80%;width:16.88%">
-  </section>
-</div>
-
-<!-- ==================== PATH B (was 13, removed dog screen → 11 actual) ==================== -->
-<div class="path-container" id="pathB">
-  <!-- B-01: 三张并排 DSCF -->
-  <section class="screen">
-    <img src="images/DSCF0473 2.JPG" style="left:1.50%;top:15.09%;width:31.05%;height:57.50%">
-    <img src="images/DSCF0475.JPG" style="left:32.45%;top:15.09%;width:31.05%;height:57.50%">
-    <img src="images/DSCF0473.JPG" style="left:63.40%;top:15.09%;width:31.05%;height:57.50%">
-  </section>
-  <!-- B-03: 两张胶片菜市场，上下叠 -->
-  <section class="screen">
-    <img src="images/1746254715000_R0001509.jpg" style="left:39.90%;top:3.06%;width:16.20%;height:45.00%">
-    <img src="images/1746254364000_R0001464.JPG" style="left:39.90%;top:53.06%;width:16.20%;height:45.00%">
-  </section>
-  <!-- B-04: 大菜市场 + 小图叠加 -->
-  <section class="screen">
-    <img src="images/1747218279000_R0001751.JPG" style="left:7.80%;top:0.93%;width:79.50%;height:98.15%">
-    <img src="images/1747218097000_R0001747.JPG" style="left:29.80%;top:25.65%;width:36.45%;height:45.00%">
-  </section>
-  <!-- B-05: 单张小竖图 -->
-  <section class="screen">
-    <img src="images/1747218138000_R0001748.JPG" style="left:3.00%;top:5.56%;width:16.20%;height:45.00%">
-  </section>
-  <!-- B-06: 单张横图 -->
-  <section class="screen">
-    <img src="images/1747534939000_R0001760.JPG" style="left:15.80%;top:27.50%;width:64.45%;height:45.00%">
-  </section>
-  <!-- B-07: 单张大横图（维修工） -->
-  <section class="screen">
-    <img src="images/R0050658.JPG" style="left:4.80%;top:14.91%;width:86.40%;height:70.09%">
-  </section>
-  <!-- B-08: 两张胶片（花瓶/菜场） -->
-  <section class="screen">
-    <img src="images/1740640455000_R0000729.jpg" style="left:23.65%;top:25.46%;width:16.20%;height:45.00%">
-    <img src="images/R0050733.JPG" style="left:57.00%;top:25.46%;width:16.10%;height:45.00%">
-  </section>
-  <!-- B-09: 四张胶片菜场连排 -->
-  <section class="screen">
-    <img src="images/1740721244000_R0000801.JPG" style="left:-5.50%;top:47.69%;width:28.45%;height:35.09%">
-    <img src="images/1740639931000_R0000706.JPG" style="left:21.10%;top:47.59%;width:28.70%;height:35.37%">
-    <img src="images/1740639860000_R0000701.JPG" style="left:46.50%;top:47.22%;width:29.15%;height:36.02%">
-    <img src="images/1740639591000_R0000687.JPG" style="left:69.45%;top:47.22%;width:29.30%;height:36.20%">
-  </section>
-  <!-- B-10: 四张混排（鱼+鸡蛋+鞋+杂物） -->
-  <section class="screen">
-    <img src="images/R0050732.JPG" style="left:2.70%;top:11.57%;width:90.65%;height:23.33%">
-    <img src="images/r001-014-Copy(1).jpg" style="left:2.70%;top:34.91%;width:11.65%;height:61.48%">
-    <img src="images/IMG_2130.JPG" style="left:83.75%;top:34.91%;width:9.55%;height:41.57%">
-    <img src="images/R0050736.JPG" style="left:14.30%;top:76.48%;width:79.00%;height:19.91%">
-  </section>
-  <!-- B-11: 单张服装店女孩 -->
-  <section class="screen">
-    <img src="images/IMG_8475.JPG" style="left:23.25%;top:19.44%;width:49.50%;height:61.11%">
-  </section>
-  <!-- B-12: 上下两张胶片菜市场 -->
-  <section class="screen">
-    <img src="images/1740640282000_R0000722.JPG" style="left:29.80%;top:13.89%;width:36.45%;height:34.54%">
-    <img src="images/1740640597000_R0000736.JPG" style="left:29.80%;top:51.48%;width:36.45%;height:40.00%">
-  </section>
-</div>
-
 <!-- ==================== SHARED ENDING ==================== -->
 <div id="shared-ending">
-  <section class="screen" id="ending-photo">
-    <img src="images/IMG_5512.PNG" alt="">
-  </section>
-  <section class="screen" id="walk-back">
+<section class="screen" id="walk-back">
     <button class="walk-link" onclick="walkAnotherWay()">walk another way</button>
     <div class="walk-sub-en">Every road leads me</div>
   </section>
@@ -425,13 +261,12 @@ function choosePath(path) {
   choice.style.opacity = '0';
   setTimeout(() => {
     choice.style.display = 'none';
-    document.getElementById(path === 'A' ? 'pathA' : 'pathB').classList.add('active');
     document.getElementById('shared-ending').classList.add('active');
     scaleApp();
     observeAll();
     window.scrollTo({ top: 0, behavior: 'instant' });
     setTimeout(() => {
-      const target = document.querySelector((path === 'A' ? '#pathA' : '#pathB') + ' .screen');
+      const target = document.getElementById('walk-back');
       if (target) target.scrollIntoView({ behavior: 'smooth' });
     }, 200);
   }, 1000);
@@ -442,8 +277,6 @@ function walkAnotherWay() {
   document.body.style.transition = 'opacity 0.8s ease';
   document.body.style.opacity = '0';
   setTimeout(() => {
-    document.getElementById('pathA').classList.remove('active');
-    document.getElementById('pathB').classList.remove('active');
     document.getElementById('shared-ending').classList.remove('active');
     const choice = document.getElementById('choice-screen');
     choice.style.display = 'flex';
@@ -452,7 +285,7 @@ function walkAnotherWay() {
     document.querySelectorAll('.screen.visible').forEach(s => {
       if (s.id !== 'choice-screen') s.classList.remove('visible');
     });
-    document.querySelectorAll('.walk-link, .walk-sub-en, #ending-photo img').forEach(el => el.classList.remove('visible'));
+    document.querySelectorAll('.walk-link, .walk-sub-en').forEach(el => el.classList.remove('visible'));
     window.scrollTo({ top: 0, behavior: 'instant' });
     scaleApp();
     document.body.style.opacity = '1';
@@ -464,7 +297,7 @@ function observeAll() {
     entries.forEach(e => {
       if (e.isIntersecting) {
         e.target.classList.add('visible');
-        e.target.querySelectorAll('#ending-photo img, .walk-link, .walk-sub-en').forEach(el => el.classList.add('visible'));
+        e.target.querySelectorAll('.walk-link, .walk-sub-en').forEach(el => el.classList.add('visible'));
       }
     });
   }, { threshold: 0.15 });
