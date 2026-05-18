@@ -188,7 +188,7 @@ body {
 }
 .scroll-hint.gone { opacity: 0; pointer-events: none; }
 
-/* Mobile: one design screen ≈ one viewport; desktop layout unchanged (JS scales) */
+/* Mobile scroll snap; desktop layout unchanged (JS scales) */
 @media (max-width: 767px) {
   html {
     scroll-snap-type: y proximity;
@@ -197,6 +197,10 @@ body {
   .screen {
     scroll-snap-align: start;
   }
+}
+/* B 竖屏：整屏完整显示画布，略加强吸附 */
+@media (max-width: 767px) and (orientation: portrait) {
+  html { scroll-snap-type: y mandatory; }
 }
 </style>
 </head>
@@ -376,7 +380,11 @@ body {
 <!-- /scale-wrap -->
 
 <script>
-/* ===== Responsive scaling: desktop = width-fit (unchanged); mobile = height-fit, same 1920 canvas ===== */
+/* ===== Scaling modes (same 1920×1080 layout, no HTML changes) =====
+ * PC:     width-fit — unchanged
+ * A 横屏: height-fit — phone landscape, one screen fills viewport height
+ * B 竖屏: contain-fit — phone portrait, full canvas visible, scroll per screen
+ */
 const DESIGN_W = 1920;
 const DESIGN_H = 1080;
 const MOBILE_BP = 768;
@@ -389,31 +397,42 @@ function getViewportSize() {
   };
 }
 
+function getScaleMode(vw, vh) {
+  if (vw >= MOBILE_BP) return 'desktop';
+  return vh > vw ? 'mobile-b' : 'mobile-a';
+}
+
 function scaleApp() {
   const wrap = document.getElementById('scale-wrap');
   if (!wrap) return;
 
   const { width: vw, height: vh } = getViewportSize();
-  const isMobile = vw < MOBILE_BP;
+  const mode = getScaleMode(vw, vh);
+  let scale;
 
-  // PC: scale to viewport width (same as before). Phone: scale to viewport height so each screen fills the screen.
-  const scale = isMobile ? (vh / DESIGN_H) : (vw / DESIGN_W);
+  if (mode === 'desktop') {
+    scale = vw / DESIGN_W;
+  } else if (mode === 'mobile-a') {
+    scale = vh / DESIGN_H;
+  } else {
+    scale = Math.min(vw / DESIGN_W, vh / DESIGN_H);
+  }
 
   wrap.style.width = DESIGN_W + 'px';
   wrap.style.transformOrigin = 'top left';
   wrap.style.transform = 'scale(' + scale + ')';
 
-  if (isMobile) {
+  if (mode === 'desktop') {
+    wrap.style.marginLeft = '0px';
+  } else {
     const scaledW = DESIGN_W * scale;
     wrap.style.marginLeft = Math.max(0, (vw - scaledW) / 2) + 'px';
-  } else {
-    wrap.style.marginLeft = '0px';
   }
 
-  // transform does not shrink layout box — adjust flow so scroll distance matches visual size
   const layoutH = wrap.offsetHeight;
   wrap.style.marginBottom = (layoutH * (scale - 1)) + 'px';
 
+  document.documentElement.dataset.scaleMode = mode;
   document.documentElement.style.setProperty('--app-scale', String(scale));
 }
 
