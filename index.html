@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>everyday and epic</title>
+<meta name="author" content="Zhiyanbing Li">
+<link rel="me" href="mailto:lizhiyanbing555@gmail.com">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap" media="print" onload="this.media='all'">
@@ -80,6 +82,76 @@ body {
   animation: subIn 2s ease 2.2s forwards;
   margin-top: 40px;
 }
+
+/* ===== Author signature =====
+ * .choice-sign lives INSIDE #scale-wrap, so its px are design-px multiplied
+ * by --app-scale. Wrapping it with the title in .choice-head keeps it from
+ * consuming a second 40px #choice-screen gap (first screen has ~135px of
+ * vertical headroom before .screen's overflow:hidden silently clips).
+ * .sign-fixed lives OUTSIDE #scale-wrap (same trick as .scroll-hint) and
+ * takes over on phones, where scale drops to ~0.2 and nothing inside the
+ * canvas can stay legible or tappable.
+ */
+.choice-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.choice-sign {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-style: italic;
+  /* counter-scale toward a constant ~15px on screen; 40px design-px ceiling
+     keeps the first screen inside its 1080px budget */
+  font-size: clamp(22px, calc(15px / var(--app-scale, 1)), 40px);
+  line-height: 1.4;
+  letter-spacing: 0.14em;
+  color: #8c8378;
+  text-align: center;
+  white-space: nowrap;
+  opacity: 0;
+  animation: subIn 2s ease 1.2s forwards;
+}
+.choice-sign a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(140, 131, 120, 0.35);
+  padding-bottom: 2px;
+  transition: color 0.6s, border-color 0.6s;
+}
+.choice-sign a:hover {
+  color: #6B1C23;
+  border-bottom-color: #6B1C23;
+}
+
+.sign-fixed {
+  display: none;
+  position: fixed;
+  right: 1rem;
+  /* clears .scroll-hint, which sits centred at bottom:1.5rem */
+  bottom: 3.4rem;
+  z-index: 99;
+  padding: 2px 4px;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: 0.1em;
+  text-align: right;
+  color: #8c8378;
+  transition: opacity 0.8s ease;
+}
+.sign-fixed a {
+  display: inline-block;
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(140, 131, 120, 0.35);
+  /* widen the touch target well past the 12px text without visual bulk */
+  padding: 8px 2px 6px;
+}
+body.in-path .sign-fixed { opacity: 0; pointer-events: none; }
 
 @keyframes titleIn {
   from { opacity: 0; transform: translateY(10px); }
@@ -203,6 +275,13 @@ body {
     scroll-snap-align: start;
   }
 }
+
+/* Phones: the in-canvas signature renders at ~5-8px, so hand off to the
+   unscaled fixed one, which stays at a real 12px and a tappable hit area. */
+@media (max-width: 767px) {
+  .choice-sign { display: none; }
+  .sign-fixed { display: block; }
+}
 /* B 竖屏：整屏完整显示画布，略加强吸附 */
 @media (max-width: 767px) and (orientation: portrait) {
   html { scroll-snap-type: y mandatory; }
@@ -212,12 +291,16 @@ body {
 <body>
 
 <div class="scroll-hint" id="sh">SCROLL</div>
+<div class="sign-fixed">Zhiyanbing Li<br><a href="mailto:lizhiyanbing555@gmail.com">lizhiyanbing555@gmail.com</a></div>
 
 <div id="scale-wrap">
 
 <!-- ==================== OPENING + CHOICE (merged) ==================== -->
 <section class="screen visible" id="choice-screen">
-  <div class="choice-title">everyday and epic</div>
+  <div class="choice-head">
+    <div class="choice-title">everyday and epic</div>
+    <div class="choice-sign">Zhiyanbing Li · <a href="mailto:lizhiyanbing555@gmail.com">lizhiyanbing555@gmail.com</a></div>
+  </div>
   <div class="choice-row">
     <button class="choice-btn" onclick="choosePath('A')">
       <img src="images/img20260417_17374138 2.JPG" alt="">
@@ -514,6 +597,7 @@ function choosePath(path) {
   choice.style.opacity = '0';
   setTimeout(() => {
     choice.style.display = 'none';
+    document.body.classList.add('in-path');
     document.getElementById(path === 'A' ? 'pathA' : 'pathB').classList.add('active');
     document.getElementById('shared-ending').classList.add('active');
     scheduleScaleApp();
@@ -539,6 +623,7 @@ function walkAnotherWay() {
     document.getElementById('pathA').classList.remove('active');
     document.getElementById('pathB').classList.remove('active');
     document.getElementById('shared-ending').classList.remove('active');
+    document.body.classList.remove('in-path');
     const choice = document.getElementById('choice-screen');
     choice.style.display = 'flex';
     choice.style.opacity = '1';
