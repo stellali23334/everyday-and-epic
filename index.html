@@ -570,6 +570,10 @@ scheduleScaleApp();
 document.querySelectorAll('#choice-screen img').forEach(function (img) {
   img.loading = 'eager';
   img.decoding = 'async';
+  // remember the original path so the two faces (~11MB decoded each) can be
+  // released while a path is open, and restored on the way back
+  if (!img.dataset.src) img.dataset.src = img.getAttribute('src');
+  img.setAttribute('src', srcFor(img.dataset.src));
 });
 
 let renderObs = null;
@@ -583,7 +587,13 @@ function initRenderObserver() {
   var margin = Math.round(1080 * scale) + 'px 0px';
   renderObs = new IntersectionObserver(function(entries) {
     entries.forEach(function(e) {
-      e.target.style.contentVisibility = e.isIntersecting ? '' : 'hidden';
+      if (e.isIntersecting) {
+        e.target.style.contentVisibility = '';
+        loadScreenImgs(e.target);
+      } else {
+        e.target.style.contentVisibility = 'hidden';
+        unloadScreenImgs(e.target);
+      }
     });
   }, { rootMargin: margin });
   document.querySelectorAll(
@@ -598,6 +608,7 @@ function choosePath(path) {
   setTimeout(() => {
     choice.style.display = 'none';
     document.body.classList.add('in-path');
+    unloadScreenImgs(choice);
     document.getElementById(path === 'A' ? 'pathA' : 'pathB').classList.add('active');
     document.getElementById('shared-ending').classList.add('active');
     scheduleScaleApp();
@@ -619,7 +630,8 @@ function walkAnotherWay() {
   setTimeout(() => {
     if (renderObs) { renderObs.disconnect(); renderObs = null; }
     document.querySelectorAll('.path-container .screen, #shared-ending .screen')
-      .forEach(function(s) { s.style.contentVisibility = ''; });
+      .forEach(function(s) { s.style.contentVisibility = ''; unloadScreenImgs(s); });
+    loadScreenImgs(document.getElementById('choice-screen'));
     document.getElementById('pathA').classList.remove('active');
     document.getElementById('pathB').classList.remove('active');
     document.getElementById('shared-ending').classList.remove('active');
@@ -638,11 +650,41 @@ function walkAnotherWay() {
   }, 800);
 }
 
+/* ===== Image memory =====
+ * A 1920px photo costs ~10MB of decoded bitmap regardless of how small it is
+ * drawn; path A holds 40 of them (~390MB). Mobile Safari kills a tab well
+ * before that, which is why phones reloaded mid-scroll. Two defences:
+ *   1. images-sm/ — a 1200px long-edge set, used on phones and small tablets.
+ *      Ample for the largest on-screen size there (~930 device px on a 3x
+ *      phone) and ~39% of the decoded bytes.
+ *   2. unloadScreenImgs — drop src once a screen is more than one screen away,
+ *      so resident images stay bounded no matter how long the scroll is.
+ * data-src is kept (not removed) so an unloaded screen can reload from cache.
+ */
+var USE_SMALL = window.matchMedia('(max-width: 1024px), (max-height: 600px)').matches;
+
+function srcFor(path) {
+  return USE_SMALL ? path.replace(/^images\//, 'images-sm/') : path;
+}
+
 function loadScreenImgs(screen) {
   screen.querySelectorAll('img[data-src]').forEach(function (img) {
-    img.src = img.dataset.src;
+    clearTimeout(+img.dataset.unloadTid || 0);
+    var want = srcFor(img.dataset.src);
+    if (img.getAttribute('src') === want) return;
     img.decoding = 'async';
-    img.removeAttribute('data-src');
+    img.setAttribute('src', want);
+  });
+}
+
+function unloadScreenImgs(screen) {
+  screen.querySelectorAll('img[data-src][src]').forEach(function (img) {
+    // brief grace period so a screen skimmed past at the boundary is not
+    // torn down and rebuilt on every frame
+    var tid = setTimeout(function () {
+      img.removeAttribute('src');
+    }, 400);
+    img.dataset.unloadTid = tid;
   });
 }
 
